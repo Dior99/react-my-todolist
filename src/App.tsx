@@ -48,6 +48,13 @@ function App() {
         setTasks(newTasks)
     }
 
+    function checkedTask(idTask: string, isDone: boolean) {
+        let task = tasks.find( t => t.id === idTask )
+        if (task) {
+           task.isDone = isDone
+            setTasks([...tasks])
+        }
+    }
 
     return (
         <div className="App">
@@ -56,6 +63,8 @@ function App() {
                       removeTask={removeTask}
                       filteredTasks={filteredTasks}
                       addTasks={addTasks}
+                      checkedTask={checkedTask}
+                      filter={filter}
             />
         </div>
     );

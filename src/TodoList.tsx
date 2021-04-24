@@ -1,5 +1,6 @@
 import React, {useState, KeyboardEvent, ChangeEvent} from 'react';
 import {FilterTaskType, TaskType} from "./App";
+import './App.css';
 
 type TodoListPropsType = {
     title: string
@@ -7,31 +8,41 @@ type TodoListPropsType = {
     removeTask: (idTask: string) => void
     filteredTasks: (value: FilterTaskType) => void
     addTasks: (title: string) => void
+    checkedTask: (idTask: string, isDone: boolean) => void
+    filter: FilterTaskType
 }
 
 function TodoList(props: TodoListPropsType) {
-    let [title, setTitle] = useState('')
+    let [title, setTitle] = useState<string>('')
+    let [error, setError] = useState<string>('')
 
     const addTaskChange = (e: ChangeEvent<HTMLInputElement>) => {
         setTitle(e.currentTarget.value)
     }
     const addTaskClick = () => {
-        props.addTasks(title)
-        setTitle('')
+        if (title.trim() !== '') {
+            props.addTasks(title)
+            setTitle('')
+        } else {
+            setError("Title is required!")
+        }
     }
     const addTasksPress = (e: KeyboardEvent<HTMLInputElement>) => {
+        setError('')
         if (e.key === 'Enter') {
             addTaskClick()
         }
     }
 
-    const ClickTasksHandlerAll = () => {
+
+
+    const clickTasksHandlerAll = () => {
         props.filteredTasks("all")
     }
-    const ClickTasksHandlerActive = () => {
+    const clickTasksHandlerActive = () => {
         props.filteredTasks("active")
     }
-    const ClickTasksHandlerCompleted = () => {
+    const clickTasksHandlerCompleted = () => {
         props.filteredTasks("completed")
     }
 
@@ -39,9 +50,13 @@ function TodoList(props: TodoListPropsType) {
         <div>
             <h3>{props.title}</h3>
             <div>
-                <input value={title} onChange={addTaskChange}
-                       onKeyPress={addTasksPress}/>
+                <input value={title}
+                       onChange={addTaskChange}
+                       onKeyPress={addTasksPress}
+                       className={error ? "error-input" : ""}
+                />
                 <button onClick={addTaskClick}>+</button>
+                <div className={error ? "error-text" : ""}>{error}</div>
             </div>
             <ul>
                 {
@@ -49,8 +64,14 @@ function TodoList(props: TodoListPropsType) {
                             const onRemoveHandler = () => {
                                 props.removeTask(t.id)
                             }
-                            return <li key={t.id}>
-                                <input type="checkbox" checked={t.isDone}/>
+                            const onCheckedHandler = (e: ChangeEvent<HTMLInputElement>) => {
+                                props.checkedTask(t.id, e.currentTarget.checked)
+                            }
+                            return <li key={t.id} className={t.isDone ? "is-done" : ""}>
+                                <input type="checkbox"
+                                       checked={t.isDone}
+                                       onChange={onCheckedHandler}
+                                />
                                 <span>{t.title}</span>
                                 <button onClick={onRemoveHandler}>x
                                 </button>
@@ -60,11 +81,11 @@ function TodoList(props: TodoListPropsType) {
                 }
             </ul>
             <div>
-                <button onClick={ClickTasksHandlerAll}>All
+                <button className={props.filter === "all" ? "active-filter" : ""} onClick={clickTasksHandlerAll}>All
                 </button>
-                <button onClick={ClickTasksHandlerActive}>Active
+                <button className={props.filter === "active" ? "active-filter" : ""} onClick={clickTasksHandlerActive}>Active
                 </button>
-                <button onClick={ClickTasksHandlerCompleted}>Completed
+                <button className={props.filter === "completed" ? "active-filter" : ""} onClick={clickTasksHandlerCompleted}>Completed
                 </button>
             </div>
         </div>
