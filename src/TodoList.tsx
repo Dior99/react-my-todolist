@@ -1,5 +1,7 @@
-import React, {ChangeEvent, KeyboardEvent, MouseEvent, useState} from 'react';
+import React, {MouseEvent} from 'react';
 import {FilterType, TasksType} from "./App";
+import {AddItemForm} from "./AddItemForm";
+import {EditableSpan} from "./EditableSpan";
 
 type TodoListPropsType = {
     id: string
@@ -11,36 +13,25 @@ type TodoListPropsType = {
     changeTaskStatus: (id: string, isDaneTask: boolean, todoListID: string) => void
     filter: FilterType
     removeTodoList: (todoListID: string) => void
+    changeTaskTitle: (id: string, newTitle: string, todoListID: string) => void
+    changeTodoListTitle: (newTitle: string, todoListID: string) => void
 }
 
 export function TodoList(props: TodoListPropsType) {
-    const [title, setTitle] = useState('')
-    const [error, setError] = useState('')
 
-    // Обработчик изменения поля ввода (добавления задачи)
-    const onChangeAddTask = (e: ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.currentTarget.value)
-    }
-    // Обработчик клика (добавления задачи)
-    const onClickAddTask = () => {
-        if (title.trim() !== "") {
-            props.addTask(title, props.id)
-            setTitle('')
-        } else {
-            setError("Title is required!")
-        }
-    }
-    // Обработчик нажатия клавиши (добавления задачи)
-    const onKeyPressAddTask = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            props.addTask(title, props.id)
-            setTitle('')
-        }
-        setError('')
-    }
     // Обработчик клика (удаление Тудулиста)
     const onClickRemoveTodoList = () => {
         props.removeTodoList(props.id)
+    }
+
+    // Функция кампомненты AddItemForm (добавление задач)
+    const addItem = (value: string) => {
+        props.addTask(value, props.id)
+    }
+
+    // Обработчик кампоненты EditableSpan(изменение названия Тудулиста)
+    const changeTodoListTitle = (value: string) => {
+        props.changeTodoListTitle(value, props.id)
     }
 
     // Обработчик клика (фильтрация всех задач)
@@ -58,17 +49,10 @@ export function TodoList(props: TodoListPropsType) {
 
     return (
         <div>
-            <h3>{props.title}
+            <h3><EditableSpan title={props.title} onChange={changeTodoListTitle}/>
                 <button onClick={onClickRemoveTodoList}>X</button>
             </h3>
-            <div>
-                <input className={error ? "error-input" : ""}
-                       value={title}
-                       onKeyPress={onKeyPressAddTask}
-                       onChange={onChangeAddTask}/>
-                <button onClick={onClickAddTask}>+</button>
-                <div className={error ? "error-text" : ""}>{error}</div>
-            </div>
+            <AddItemForm addItem={addItem}/>
             <ul>
                 {
                     props.tasks.map(el => {
@@ -81,13 +65,17 @@ export function TodoList(props: TodoListPropsType) {
                                 let newTaskChecked = e.currentTarget.checked
                                 props.changeTaskStatus(el.id, newTaskChecked, props.id)
                             }
+                            // Изменение задачи (кампонента EditableSpan)
+                            const onChangeTaskTitle = (newTitle: string) => {
+                                props.changeTaskTitle(el.id, newTitle, props.id)
+                            }
                             const completedTasks = el.isDone ? "is-done" : "";
                             return (
                                 <li key={el.id} className={completedTasks}>
                                     <input type="checkbox"
                                            checked={el.isDone}
                                            onClick={onClickChecked}/>
-                                    <span>{el.title}</span>
+                                    <EditableSpan title={el.title} onChange={onChangeTaskTitle}/>
                                     <button onClick={onClickRemoveTask}>X</button>
                                 </li>
                             )
