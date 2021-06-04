@@ -13,7 +13,7 @@ export type TasksType = {
 }
 export type FilterType = "all" | "active" | "completed"
 
-type TodoListType = {
+export type TodolistType = {
     id: string
     title: string
     filter: FilterType
@@ -28,7 +28,7 @@ export function App() {
 
     const todoListID1 = v1();
     const todoListID2 = v1();
-    const [todoLists, setTodoLists] = useState<TodoListType[]>([
+    const [todoLists, setTodoLists] = useState<TodolistType[]>([
         {id: todoListID1, title: "What to learn", filter: 'all'},
         {id: todoListID2, title: "What to buy", filter: 'all'}
     ])
@@ -46,20 +46,12 @@ export function App() {
         ],
     })
 
+    // Task:
     // Удаление задач
     function removeTask(taskID: string, todoListID: string) {
         let todoListTasks = tasks[todoListID]
         tasks[todoListID] = todoListTasks.filter(t => t.id !== taskID)
         setTasks({...tasks})
-    }
-
-    // Фильтрация задач
-    function changeFilter(value: FilterType, todoListID: string) {
-        let task = todoLists.find(tl => tl.id === todoListID)
-        if (task) {
-            task.filter = value;
-            setTodoLists([...todoLists])
-        }
     }
 
     // Добавление задачи
@@ -94,6 +86,8 @@ export function App() {
         }
     }
 
+
+    // Todolist:
     // Удаление Тудулиста
     function removeTodoList(todoListID: string) {
         setTodoLists(todoLists.filter(tl => tl.id !== todoListID))
@@ -104,22 +98,18 @@ export function App() {
     // Добавление Тудулиста
     function addTodoList(newTitle: string) {
         const newTodoListID = v1()
-        let newTodoList: TodoListType = {
-            id: newTodoListID,
-            title: newTitle,
-            filter: 'all'
-        }
-        setTodoLists([...todoLists, newTodoList])
+        setTodoLists([...todoLists, {id: newTodoListID, title: newTitle, filter: 'all'}])
         setTasks({...tasks, [newTodoListID]: []})
     }
 
     // Изменение названия Тудулиста
     function changeTodoListTitle(newTitle: string, todoListID: string) {
-        let newTodoList = todoLists.find(tl => tl.id === todoListID)
-        if (newTodoList) {
-            newTodoList.title = newTitle
-            setTodoLists([...todoLists])
-        }
+        setTodoLists(todoLists.map(tl => (tl.id === todoListID ? {...tl, title: newTitle} : tl)))
+    }
+
+    // Фильтрация задач
+    function changeFilter(value: FilterType, todoListID: string) {
+        setTodoLists(todoLists.map(tl => (tl.id === todoListID ? {...tl, filter: value} : tl)))
     }
 
     const todoList = todoLists.map(tl => {
