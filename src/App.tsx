@@ -19,7 +19,7 @@ export type TodolistType = {
     filter: FilterType
 }
 
-type TodoListTaskType = {
+export type TodoListTaskType = {
     [id: string]: Array<TasksType>
 }
 
@@ -49,41 +49,23 @@ export function App() {
     // Task:
     // Удаление задач
     function removeTask(taskID: string, todoListID: string) {
-        let todoListTasks = tasks[todoListID]
-        tasks[todoListID] = todoListTasks.filter(t => t.id !== taskID)
-        setTasks({...tasks})
+        setTasks({...tasks, [todoListID]: tasks[todoListID].filter(t => t.id !== taskID)})
     }
 
     // Добавление задачи
     function addTask(title: string, todoListID: string) {
-        let task = {
-            id: v1(),
-            title,
-            isDone: false
-        }
-        let todoListTasks = tasks[todoListID]
-        tasks[todoListID] = [task, ...todoListTasks]
-        setTasks({...tasks})
+        let task = {id: v1(), title, isDone: false}
+        setTasks({...tasks, [todoListID]: [task, ...tasks[todoListID]]})
     }
 
     //Изменение задачи
     function changeTaskTitle(id: string, newTitle: string, todoListID: string) {
-        let todoListTasks = tasks[todoListID]
-        let task = todoListTasks.find(t => t.id === id)
-        if (task) {
-            task.title = newTitle;
-            setTasks({...tasks})
-        }
+        setTasks({...tasks, [todoListID]: tasks[todoListID].map(t => (t.id === id ? {...t, title: newTitle} : t))})
     }
 
     // Изменение чекбокса
     function changeTaskStatus(id: string, isDaneTask: boolean, todoListID: string) {
-        let todoListTasks = tasks[todoListID]
-        let task = todoListTasks.find(t => t.id === id)
-        if (task) {
-            task.isDone = isDaneTask;
-            setTasks({...tasks})
-        }
+        setTasks({...tasks, [todoListID]: tasks[todoListID].map(t => (t.id === id ? {...t, isDone: isDaneTask} : t))})
     }
 
 

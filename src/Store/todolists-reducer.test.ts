@@ -1,5 +1,5 @@
 import {
-    addTodolistAC, changeTodolistFilterAC, ChangeTodolistFilterType,
+    addTodolistAC, changeTodolistFilterAC,
     changeTodolistTitleAC,
     ChangeTodolistTitleType,
     removeTodolistAC,
