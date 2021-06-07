@@ -7,11 +7,12 @@ type EditableSpanPropsType = {
 }
 
 export function EditableSpan(props: EditableSpanPropsType) {
-    const [title, setTitle] = useState<string>(props.title)
+    const [title, setTitle] = useState<string>('')
     const [editMode, setEditMode] = useState<boolean>(false)
 
     const activeEditMode = () => {
         setEditMode(true)
+        setTitle(props.title)
     }
     const activeViewMode = () => {
         setEditMode(false)
@@ -28,6 +29,6 @@ export function EditableSpan(props: EditableSpanPropsType) {
                  onBlur={activeViewMode}
                  onChange={changeTaskTitle}
                  autoFocus/>
-        : <span onDoubleClick={activeEditMode}>{title}</span>
+        : <span onDoubleClick={activeEditMode}>{props.title}</span>
     )
 }

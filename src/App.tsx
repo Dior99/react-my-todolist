@@ -1,10 +1,17 @@
-import React, {useState} from 'react';
+import React from 'react';
 import "./App.css"
 import {TodoList} from "./TodoList";
-import {v1} from "uuid";
 import {AddItemForm} from "./AddItemForm";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from '@material-ui/core';
 import {Menu} from "@material-ui/icons";
+import {useDispatch, useSelector} from "react-redux";
+import {StateType} from "./Store/store";
+import {
+    addTodolistAC,
+    changeTodolistFilterAC,
+    changeTodolistTitleAC,
+    removeTodolistAC
+} from "./Store/todolists-reducer";
 
 export type TasksType = {
     id: string
@@ -26,83 +33,31 @@ export type TodoListTaskType = {
 
 export function App() {
 
-    const todoListID1 = v1();
-    const todoListID2 = v1();
-    const [todoLists, setTodoLists] = useState<TodolistType[]>([
-        {id: todoListID1, title: "What to learn", filter: 'all'},
-        {id: todoListID2, title: "What to buy", filter: 'all'}
-    ])
-
-    let [tasks, setTasks] = useState<TodoListTaskType>({
-        [todoListID1]: [
-            {id: v1(), title: "HTML", isDone: false},
-            {id: v1(), title: "CSS", isDone: true},
-            {id: v1(), title: "REACT", isDone: true},
-            {id: v1(), title: "JS", isDone: false},
-        ],
-        [todoListID2]: [
-            {id: v1(), title: "Milk", isDone: false},
-            {id: v1(), title: "Bread", isDone: true},
-        ],
-    })
-
-    // Task:
-    // Удаление задач
-    function removeTask(taskID: string, todoListID: string) {
-        setTasks({...tasks, [todoListID]: tasks[todoListID].filter(t => t.id !== taskID)})
-    }
-
-    // Добавление задачи
-    function addTask(title: string, todoListID: string) {
-        let task = {id: v1(), title, isDone: false}
-        setTasks({...tasks, [todoListID]: [task, ...tasks[todoListID]]})
-    }
-
-    //Изменение задачи
-    function changeTaskTitle(id: string, newTitle: string, todoListID: string) {
-        setTasks({...tasks, [todoListID]: tasks[todoListID].map(t => (t.id === id ? {...t, title: newTitle} : t))})
-    }
-
-    // Изменение чекбокса
-    function changeTaskStatus(id: string, isDaneTask: boolean, todoListID: string) {
-        setTasks({...tasks, [todoListID]: tasks[todoListID].map(t => (t.id === id ? {...t, isDone: isDaneTask} : t))})
-    }
-
+    const dispatch = useDispatch();
+    const todolists = useSelector<StateType, TodolistType[]>(state => state.todolist)
 
     // Todolist:
     // Удаление Тудулиста
     function removeTodoList(todoListID: string) {
-        setTodoLists(todoLists.filter(tl => tl.id !== todoListID))
-        delete tasks[todoListID];
-        setTasks({...tasks})
+        dispatch(removeTodolistAC(todoListID))
     }
 
     // Добавление Тудулиста
     function addTodoList(newTitle: string) {
-        const newTodoListID = v1()
-        setTodoLists([...todoLists, {id: newTodoListID, title: newTitle, filter: 'all'}])
-        setTasks({...tasks, [newTodoListID]: []})
+        dispatch(addTodolistAC(newTitle))
     }
 
     // Изменение названия Тудулиста
     function changeTodoListTitle(newTitle: string, todoListID: string) {
-        setTodoLists(todoLists.map(tl => (tl.id === todoListID ? {...tl, title: newTitle} : tl)))
+        dispatch(changeTodolistTitleAC(todoListID, newTitle))
     }
 
     // Фильтрация задач
     function changeFilter(value: FilterType, todoListID: string) {
-        setTodoLists(todoLists.map(tl => (tl.id === todoListID ? {...tl, filter: value} : tl)))
+        dispatch(changeTodolistFilterAC(todoListID, value))
     }
 
-    const todoList = todoLists.map(tl => {
-        let todoListTasks = tasks[tl.id]
-        let tasksForTodoList = todoListTasks
-        if (tl.filter === 'active') {
-            tasksForTodoList = todoListTasks.filter(t => t.isDone === false)
-        }
-        if (tl.filter === 'completed') {
-            tasksForTodoList = todoListTasks.filter(t => t.isDone === true)
-        }
+    const todoList = todolists.map(tl => {
         return (
             <Grid item>
                 <Paper elevation={19} square={false} style={{padding: '10px'}}>
@@ -110,13 +65,8 @@ export function App() {
                               key={tl.id}
                               id={tl.id}
                               filter={tl.filter}
-                              tasks={tasksForTodoList}
-                              removeTask={removeTask}
                               changeFilter={changeFilter}
-                              addTask={addTask}
-                              changeTaskStatus={changeTaskStatus}
                               removeTodoList={removeTodoList}
-                              changeTaskTitle={changeTaskTitle}
                               changeTodoListTitle={changeTodoListTitle}
                     />
                 </Paper>
