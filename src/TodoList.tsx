@@ -1,13 +1,13 @@
-import React, {ChangeEvent} from 'react';
+import React, {useCallback} from 'react';
 import {FilterType, TasksType} from "./App";
 import {AddItemForm} from "./AddItemForm";
 import {EditableSpan} from "./EditableSpan";
-import {Button, ButtonGroup, IconButton, Checkbox} from "@material-ui/core";
-import {Delete} from "@material-ui/icons";
+import {Button, ButtonGroup, IconButton} from "@material-ui/core";
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./Store/store";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "./Store/tasks-reducer";
+import {Task} from "./Task";
 
 type TodoListPropsType = {
     id: string
@@ -18,84 +18,84 @@ type TodoListPropsType = {
     changeTodoListTitle: (newTitle: string, todoListID: string) => void
 }
 
-export function TodoList(props: TodoListPropsType) {
-
+export const TodoList = React.memo( ({id, title, changeFilter, filter, removeTodoList, changeTodoListTitle}: TodoListPropsType) => {
+    //console.log('todolist')
     const dispatch = useDispatch();
-    const tasks = useSelector<StateType, Array<TasksType>>(state => state.tasks[props.id])
+    const tasks = useSelector<StateType, Array<TasksType>>(state => state.tasks[id])
+
+    // Удаление задачи
+    const removeTask = useCallback( (taskId: string) => {
+        dispatch(removeTaskAC(taskId, id))
+    }, [dispatch, id])
+
+    // Изменение чекбокса
+    const changeTaskStatus = useCallback( (taskId: string, isDone: boolean) => {
+        dispatch(changeTaskStatusAC(taskId, isDone, id))
+    }, [dispatch, id])
+
+    // Изменение задачи
+    const changeTaskTitle = useCallback( (taskId: string, newTitle: string) => {
+        dispatch(changeTaskTitleAC(taskId, newTitle, id))
+    }, [dispatch, id])
+
+    // Функция кампомненты AddItemForm (добавление задач)
+    const addItem = useCallback( (value: string) => {
+        dispatch(addTaskAC(value, id))
+    }, [dispatch, id])
 
     // Обработчик клика (удаление Тудулиста)
     const onClickRemoveTodoList = () => {
-        props.removeTodoList(props.id)
-    }
-
-    // Функция кампомненты AddItemForm (добавление задач)
-    const addItem = (value: string) => {
-        dispatch(addTaskAC(value, props.id))
+        removeTodoList(id)
     }
 
     // Обработчик кампоненты EditableSpan(изменение названия Тудулиста)
-    const changeTodoListTitle = (value: string) => {
-        props.changeTodoListTitle(value, props.id)
-    }
+    const changeTodolistTitle = useCallback( (value: string) => {
+        changeTodoListTitle(value, id)
+    }, [changeTodoListTitle, id])
 
     // Обработчик клика (фильтрация всех задач)
-    const clickFilterAllHandler = () => {
-        props.changeFilter('all', props.id)
-    }
+    const clickFilterAllHandler = useCallback( () => {
+        changeFilter('all', id)
+    }, [changeFilter, id])
+
     // Обработчик клика (фильтрация не выполненных задач)
-    const clickFilterActiveHandler = () => {
-        props.changeFilter('active', props.id)
-    }
+    const clickFilterActiveHandler = useCallback( () => {
+        changeFilter('active', id)
+    }, [changeFilter, id])
+
     // Обработчик клика (фильтрация выполненных задач)
-    const clickFilterCompletedHandler = () => {
-        props.changeFilter('completed', props.id)
-    }
+    const clickFilterCompletedHandler = useCallback( () => {
+        changeFilter('completed', id)
+    }, [changeFilter, id])
 
     let todoListTasks = tasks;
     let tasksForTodoList = todoListTasks;
-    if (props.filter === 'active') {
+    if (filter === 'active') {
         tasksForTodoList = todoListTasks.filter(t => t.isDone === false)
     }
-    if (props.filter === 'completed') {
+    if (filter === 'completed') {
         tasksForTodoList = todoListTasks.filter(t => t.isDone === true)
     }
 
     return (
         <div>
-            <h3 style={{textAlign: 'center'}}><EditableSpan title={props.title} onChange={changeTodoListTitle}/>
-                <IconButton>
-                    <HighlightOffIcon color={'secondary'} onClick={onClickRemoveTodoList}/>
+            <h3 style={{textAlign: 'center'}}><EditableSpan title={title} onChange={changeTodolistTitle}/>
+                <IconButton onClick={onClickRemoveTodoList}>
+                    <HighlightOffIcon color={'secondary'}/>
                 </IconButton>
             </h3>
             <AddItemForm addItem={addItem}/>
             <div>
                 {
                     tasksForTodoList.map(el => {
-                            // Обработчик клика (удаление задачи)
-                            const onClickRemoveTask = () => {
-                                dispatch(removeTaskAC(el.id, props.id))
-                            }
-                            // Обработчик клика (изменение чекбокса)
-                            const onClickChecked = (e: ChangeEvent<HTMLInputElement>) => {
-                                let newTaskChecked = e.currentTarget.checked
-                                dispatch(changeTaskStatusAC(el.id, newTaskChecked, props.id))
-                            }
-                            // Изменение задачи (кампонента EditableSpan)
-                            const onChangeTaskTitle = (newTitle: string) => {
-                                dispatch(changeTaskTitleAC(el.id, newTitle, props.id))
-                            }
-                            const completedTasks = {
-                                opacity: el.isDone ? "0.5" : ""
-                            }
                             return (
-                                <div key={el.id} style={completedTasks}>
-                                    <Checkbox checked={el.isDone}
-                                              size={'small'}
-                                              onChange={onClickChecked}/>
-                                    <EditableSpan title={el.title} onChange={onChangeTaskTitle}/>
-                                    <IconButton>
-                                        <Delete color={'secondary'} onClick={onClickRemoveTask}/>
-                                    </IconButton>
+                                <div key={el.id}>
+                                    <Task removeTask={removeTask}
+                                          id={el.id}
+                                          isDone={el.isDone}
+                                          title={el.title}
+                                          changeTaskStatus={changeTaskStatus}
+                                          changeTaskTitle={changeTaskTitle}/>
                                 </div>
                             )
                         }
@@ -105,16 +105,17 @@ export function TodoList(props: TodoListPropsType) {
             <div>
                 <ButtonGroup size={'small'} fullWidth={true} style={{paddingTop: '5px'}}>
                     <Button onClick={clickFilterAllHandler}
-                            variant={props.filter === 'all' ? "contained" : "outlined"}>All
+                            variant={filter === 'all' ? "contained" : "outlined"}>All
                     </Button>
                     <Button color={'primary'} onClick={clickFilterActiveHandler}
-                            variant={props.filter === 'active' ? "contained" : "outlined"}>Active
+                            variant={filter === 'active' ? "contained" : "outlined"}>Active
                     </Button>
                     <Button color={'secondary'} onClick={clickFilterCompletedHandler}
-                            variant={props.filter === 'completed' ? "contained" : "outlined"}>Completed
+                            variant={filter === 'completed' ? "contained" : "outlined"}>Completed
                     </Button>
                 </ButtonGroup>
             </div>
         </div>
     )
-}
+})
+

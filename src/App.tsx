@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import "./App.css"
 import {TodoList} from "./TodoList";
 import {AddItemForm} from "./AddItemForm";
@@ -38,31 +38,30 @@ export function App() {
 
     // Todolist:
     // Удаление Тудулиста
-    function removeTodoList(todoListID: string) {
+    const removeTodoList = useCallback( (todoListID: string) => {
         dispatch(removeTodolistAC(todoListID))
-    }
+    }, [dispatch])
 
     // Добавление Тудулиста
-    function addTodoList(newTitle: string) {
+    const addTodoList = useCallback( (newTitle: string) => {
         dispatch(addTodolistAC(newTitle))
-    }
+    }, [dispatch])
 
     // Изменение названия Тудулиста
-    function changeTodoListTitle(newTitle: string, todoListID: string) {
+    const changeTodoListTitle = useCallback( (newTitle: string, todoListID: string) => {
         dispatch(changeTodolistTitleAC(todoListID, newTitle))
-    }
+    }, [dispatch])
 
     // Фильтрация задач
-    function changeFilter(value: FilterType, todoListID: string) {
+    const changeFilter = useCallback( (value: FilterType, todoListID: string) => {
         dispatch(changeTodolistFilterAC(todoListID, value))
-    }
+    }, [dispatch])
 
     const todoList = todolists.map(tl => {
         return (
-            <Grid item>
+            <Grid key={tl.id} item>
                 <Paper elevation={19} square={false} style={{padding: '10px'}}>
                     <TodoList title={tl.title}
-                              key={tl.id}
                               id={tl.id}
                               filter={tl.filter}
                               changeFilter={changeFilter}
