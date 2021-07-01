@@ -35,18 +35,7 @@ type ActionType = RemoveTaskType
     | AddTodolistType
     | RemoveTodolistType
 
-const initialState: TodoListTaskType = {
-    [todoListID1]: [
-        {id: v1(), title: "HTML", isDone: false},
-        {id: v1(), title: "CSS", isDone: true},
-        {id: v1(), title: "REACT", isDone: true},
-        {id: v1(), title: "JS", isDone: false},
-    ],
-    [todoListID2]: [
-        {id: v1(), title: "Milk", isDone: false},
-        {id: v1(), title: "Bread", isDone: true},
-    ],
-}
+const initialState: TodoListTaskType = {}
 
 export function tasksReducer(state: TodoListTaskType = initialState, action: ActionType): TodoListTaskType {
     switch (action.type) {

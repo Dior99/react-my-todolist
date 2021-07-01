@@ -91,9 +91,7 @@ export const TodoList = React.memo( ({id, title, changeFilter, filter, removeTod
                             return (
                                 <div key={el.id}>
                                     <Task removeTask={removeTask}
-                                          id={el.id}
-                                          isDone={el.isDone}
-                                          title={el.title}
+                                          task={el}
                                           changeTaskStatus={changeTaskStatus}
                                           changeTaskTitle={changeTaskTitle}/>
                                 </div>
