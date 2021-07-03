@@ -1,17 +1,4 @@
-import axios from "axios";
-import {ResponseType} from "./todolists-api"
-
-const settings = {
-    withCredentials: true,
-    headers: {
-        "API-KEY": "399f4deb-9c8f-42dd-9e4d-88b49ab8c66a"
-    }
-}
-
-const instance = axios.create({
-    baseURL: "https://social-network.samuraijs.com/api/1.1/",
-    ...settings
-})
+import {instance, ResponseType} from "./todolists-api"
 
 export type TaskType = {
     id: string
