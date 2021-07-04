@@ -9,32 +9,14 @@ import {StateType} from "./Store/store";
 import {
     addTodolistAC,
     changeTodolistFilterAC,
-    changeTodolistTitleAC,
-    removeTodolistAC
+    changeTodolistTitleAC, FilterType,
+    removeTodolistAC, TodolistDomainType
 } from "./Store/todolists-reducer";
-
-export type TasksType = {
-    id: string
-    title: string
-    isDone: boolean
-}
-export type FilterType = "all" | "active" | "completed"
-
-export type TodolistType = {
-    id: string
-    title: string
-    filter: FilterType
-}
-
-export type TodoListTaskType = {
-    [id: string]: Array<TasksType>
-}
-
 
 export function App() {
 
     const dispatch = useDispatch();
-    const todolists = useSelector<StateType, TodolistType[]>(state => state.todolist)
+    const todolists = useSelector<StateType, TodolistDomainType[]>(state => state.todolist)
 
     // Todolist:
     // Удаление Тудулиста

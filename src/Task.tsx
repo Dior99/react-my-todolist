@@ -2,13 +2,13 @@ import React, {ChangeEvent, useCallback} from "react";
 import {Checkbox, IconButton} from "@material-ui/core";
 import {EditableSpan} from "./EditableSpan";
 import {Delete} from "@material-ui/icons";
-import {TasksType} from "./App";
+import {TaskStatuses, TaskType} from "./api/tasks-api";
 
 type TaskPropsType = {
     removeTask: (taskId: string) => void
-    changeTaskStatus: (taskId: string, isDone: boolean) => void
+    changeTaskStatus: (taskId: string, status: TaskStatuses) => void
     changeTaskTitle: (taskId: string, newTitle: string) => void
-    task: TasksType
+    task: TaskType
 }
 export const Task = React.memo( ({removeTask, changeTaskStatus, changeTaskTitle, task}: TaskPropsType) => {
     //console.log('Task')
@@ -18,19 +18,20 @@ export const Task = React.memo( ({removeTask, changeTaskStatus, changeTaskTitle,
     }
     // Обработчик клика (изменение чекбокса)
     const onClickChecked = (e: ChangeEvent<HTMLInputElement>) => {
-        changeTaskStatus(task.id, e.currentTarget.checked)
+        let newStatusValue = e.currentTarget.checked;
+        changeTaskStatus(task.id, newStatusValue ? TaskStatuses.Completed : TaskStatuses.New)
     }
     // Изменение задачи (кампонента EditableSpan)
     const onChangeTaskTitle = useCallback( (newTitle: string) => {
         changeTaskTitle(task.id, newTitle)
     }, [changeTaskTitle, task.id])
     const completedTasks = {
-        opacity: task.isDone ? "0.5" : ""
+        opacity: task.status === TaskStatuses.Completed ? "0.5" : ""
     }
 
     return (
         <div style={completedTasks}>
-            <Checkbox checked={task.isDone}
+            <Checkbox checked={task.status === TaskStatuses.Completed}
                       size={'small'}
                       onChange={onClickChecked}/>
             <EditableSpan title={task.title} onChange={onChangeTaskTitle}/>
