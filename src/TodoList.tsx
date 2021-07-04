@@ -1,11 +1,11 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {AddItemForm} from "./AddItemForm";
 import {EditableSpan} from "./EditableSpan";
 import {Button, ButtonGroup, IconButton} from "@material-ui/core";
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./Store/store";
-import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "./Store/tasks-reducer";
+import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, getTasks, removeTaskAC} from "./Store/tasks-reducer";
 import {Task} from "./Task";
 import {FilterType} from "./Store/todolists-reducer";
 import {TaskStatuses, TaskType} from "./api/tasks-api";
@@ -23,6 +23,10 @@ export const TodoList = React.memo( ({id, title, changeFilter, filter, removeTod
     //console.log('todolist')
     const dispatch = useDispatch();
     const tasks = useSelector<StateType, Array<TaskType>>(state => state.tasks[id])
+
+    useEffect(() => {
+        dispatch(getTasks(id))
+    }, [id])
 
     // Удаление задачи
     const removeTask = useCallback( (taskId: string) => {

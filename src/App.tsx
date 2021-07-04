@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import "./App.css"
 import {TodoList} from "./TodoList";
 import {AddItemForm} from "./AddItemForm";
@@ -9,7 +9,7 @@ import {StateType} from "./Store/store";
 import {
     addTodolistAC,
     changeTodolistFilterAC,
-    changeTodolistTitleAC, FilterType,
+    changeTodolistTitleAC, FilterType, getTodolistTC,
     removeTodolistAC, TodolistDomainType
 } from "./Store/todolists-reducer";
 
@@ -17,6 +17,10 @@ export function App() {
 
     const dispatch = useDispatch();
     const todolists = useSelector<StateType, TodolistDomainType[]>(state => state.todolist)
+
+    useEffect(() => {
+        dispatch(getTodolistTC)
+    }, [])
 
     // Todolist:
     // Удаление Тудулиста
