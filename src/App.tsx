@@ -7,10 +7,13 @@ import {Menu} from "@material-ui/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./Store/store";
 import {
-    addTodolistAC,
+    createTodolistTC,
+    changerTodolistTitleTC,
     changeTodolistFilterAC,
-    changeTodolistTitleAC, FilterType, getTodolistTC,
-    removeTodolistAC, TodolistDomainType
+    FilterType,
+    getTodolistTC,
+    deleteTodolistTC,
+    TodolistDomainType
 } from "./Store/todolists-reducer";
 
 export function App() {
@@ -20,22 +23,22 @@ export function App() {
 
     useEffect(() => {
         dispatch(getTodolistTC)
-    }, [])
+    }, [dispatch])
 
     // Todolist:
     // Удаление Тудулиста
     const removeTodoList = useCallback( (todoListID: string) => {
-        dispatch(removeTodolistAC(todoListID))
+        dispatch(deleteTodolistTC(todoListID))
     }, [dispatch])
 
     // Добавление Тудулиста
     const addTodoList = useCallback( (newTitle: string) => {
-        dispatch(addTodolistAC(newTitle))
+        dispatch(createTodolistTC(newTitle))
     }, [dispatch])
 
     // Изменение названия Тудулиста
     const changeTodoListTitle = useCallback( (newTitle: string, todoListID: string) => {
-        dispatch(changeTodolistTitleAC(todoListID, newTitle))
+        dispatch(changerTodolistTitleTC(todoListID, newTitle))
     }, [dispatch])
 
     // Фильтрация задач

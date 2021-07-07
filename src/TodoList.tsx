@@ -5,10 +5,15 @@ import {Button, ButtonGroup, IconButton} from "@material-ui/core";
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./Store/store";
-import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, getTasks, removeTaskAC} from "./Store/tasks-reducer";
+import {
+    addTaskTC,
+    getTasks,
+    deleteTaskTC,
+    TodoListTaskType, updateTaskTC
+} from "./Store/tasks-reducer";
 import {Task} from "./Task";
 import {FilterType} from "./Store/todolists-reducer";
-import {TaskStatuses, TaskType} from "./api/tasks-api";
+import {TaskStatuses} from "./api/tasks-api";
 
 type TodoListPropsType = {
     id: string
@@ -22,30 +27,30 @@ type TodoListPropsType = {
 export const TodoList = React.memo( ({id, title, changeFilter, filter, removeTodoList, changeTodoListTitle}: TodoListPropsType) => {
     //console.log('todolist')
     const dispatch = useDispatch();
-    const tasks = useSelector<StateType, Array<TaskType>>(state => state.tasks[id])
+    const tasks = useSelector<StateType, TodoListTaskType>(state => state.tasks)
 
     useEffect(() => {
         dispatch(getTasks(id))
-    }, [id])
+    }, [dispatch, id])
 
     // Удаление задачи
     const removeTask = useCallback( (taskId: string) => {
-        dispatch(removeTaskAC(taskId, id))
-    }, [dispatch, id])
+        dispatch(deleteTaskTC(taskId, id))
+    }, [dispatch])
 
     // Изменение чекбокса
     const changeTaskStatus = useCallback( (taskId: string, status: TaskStatuses) => {
-        dispatch(changeTaskStatusAC(taskId, status, id))
+        dispatch(updateTaskTC( id, taskId, {status}))
     }, [dispatch, id])
 
     // Изменение задачи
     const changeTaskTitle = useCallback( (taskId: string, newTitle: string) => {
-        dispatch(changeTaskTitleAC(taskId, newTitle, id))
+        dispatch(updateTaskTC(id, taskId, {title: newTitle}))
     }, [dispatch, id])
 
     // Функция кампомненты AddItemForm (добавление задач)
     const addItem = useCallback( (value: string) => {
-        dispatch(addTaskAC(value, id))
+        dispatch(addTaskTC(id, value))
     }, [dispatch, id])
 
     // Обработчик клика (удаление Тудулиста)
@@ -73,7 +78,7 @@ export const TodoList = React.memo( ({id, title, changeFilter, filter, removeTod
         changeFilter('completed', id)
     }, [changeFilter, id])
 
-    let todoListTasks = tasks;
+    let todoListTasks = tasks[id];
     let tasksForTodoList = todoListTasks;
     if (filter === 'active') {
         tasksForTodoList = todoListTasks.filter(t => t.status === TaskStatuses.New)

@@ -1,11 +1,16 @@
-import {addTodolistAC, setTodolistAC, TodolistDomainType, todolistsReducer} from "./todolists-reducer";
+import {createTodolistAC, setTodolistAC, TodolistDomainType, todolistsReducer} from "./todolists-reducer";
 import {tasksReducer, TodoListTaskType} from "./tasks-reducer";
 
 test('ids should be equals', () => {
     const startTasksState: TodoListTaskType = {};
     const startTodolistsState: Array<TodolistDomainType> = [];
 
-    const action = addTodolistAC("new todolist");
+    const action = createTodolistAC({
+            id: '',
+            title: "new todolist",
+            addedDate: '',
+            order: 0,
+        });
 
     const endTasksState = tasksReducer(startTasksState, action)
     const endTodolistsState = todolistsReducer(startTodolistsState, action)
@@ -14,8 +19,8 @@ test('ids should be equals', () => {
     const idFromTasks = keys[0];
     const idFromTodolists = endTodolistsState[0].id;
 
-    expect(idFromTasks).toBe(action.todolistID);
-    expect(idFromTodolists).toBe(action.todolistID);
+    expect(idFromTasks).toBe(action.todolist.id);
+    expect(idFromTodolists).toBe(action.todolist.id);
 });
 
 test("empty arrays should be added when  we set todolists", () => {
