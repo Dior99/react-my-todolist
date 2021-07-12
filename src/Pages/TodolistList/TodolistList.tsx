@@ -1,22 +1,18 @@
-import React, {useCallback, useEffect} from 'react';
-import "./App.css"
-import {TodoList} from "./TodoList";
-import {AddItemForm} from "./AddItemForm";
-import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from '@material-ui/core';
-import {Menu} from "@material-ui/icons";
 import {useDispatch, useSelector} from "react-redux";
-import {StateType} from "./Store/store";
+import {StateType} from "../../App/store";
 import {
+    changerTodolistTitleTC, changeTodolistFilterAC,
     createTodolistTC,
-    changerTodolistTitleTC,
-    changeTodolistFilterAC,
-    FilterType,
+    deleteTodolistTC, FilterType,
     getTodolistTC,
-    deleteTodolistTC,
     TodolistDomainType
-} from "./Store/todolists-reducer";
+} from "./todolists-reducer";
+import React, {useCallback, useEffect} from "react";
+import {Grid, Paper} from "@material-ui/core";
+import {TodoList} from "./Todolist/TodoList";
+import {AddItemForm} from "../../Component/AddItemForm/AddItemForm";
 
-export function App() {
+export function TodolistList () {
 
     const dispatch = useDispatch();
     const todolists = useSelector<StateType, TodolistDomainType[]>(state => state.todolist)
@@ -61,31 +57,14 @@ export function App() {
             </Grid>
         )
     })
-
     return (
-        <div className="App">
-            <AppBar position="static">
-                <Toolbar style={{justifyContent: 'space-between'}}>
-                    <IconButton edge="start"
-                                color="inherit"
-                                aria-label="menu">
-                        <Menu/>
-                    </IconButton>
-                    <Typography variant="h6">
-                        TodoList
-                    </Typography>
-                    <Button variant={'outlined'} color="inherit">Login</Button>
-                </Toolbar>
-            </AppBar>
-            <Container fixed disableGutters={true}>
-                <Grid container style={{padding: '20px'}}>
-                    <AddItemForm addItem={addTodoList}/>
-                </Grid>
-                <Grid container item spacing={3} justify={"space-around"}>
-                    {todoList}
-                </Grid>
-            </Container>
-        </div>
+        <>
+            <Grid container style={{padding: '20px'}}>
+                <AddItemForm addItem={addTodoList}/>
+            </Grid>
+            <Grid container item spacing={3} justify={"space-around"}>
+                {todoList}
+            </Grid>
+        </>
     )
 }
-

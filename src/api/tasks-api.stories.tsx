@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {TaskPriorities, tasksAPI, TaskStatuses, UpdateTaskModelType} from "../../api/tasks-api";
+import {TaskPriorities, tasksAPI, TaskStatuses, UpdateTaskModelType} from "./tasks-api";
 
 export default {
     title: 'API/tasks'
@@ -8,7 +8,7 @@ export default {
 export const GetTasks = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
-        const todolistId = "c9922bf3-ec54-4637-b946-beaf887341ad"
+        const todolistId = "1b82bf82-7b34-4df6-bfeb-8fc7c07e46ca"
         tasksAPI.getTasks(todolistId)
             .then(response => {
                 setState(response.data)
@@ -20,7 +20,7 @@ export const GetTasks = () => {
 export const CreateTask = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
-        const todolistId = "c9922bf3-ec54-4637-b946-beaf887341ad"
+        const todolistId = "1b82bf82-7b34-4df6-bfeb-8fc7c07e46ca"
         tasksAPI.createTask(todolistId, "HTML5")
             .then(response => {
                 setState(response.data)
@@ -32,8 +32,8 @@ export const CreateTask = () => {
 export const DeleteTask = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
-        const todolistId = "c9922bf3-ec54-4637-b946-beaf887341ad"
-        const taskId = "43126d4d-301d-4365-a418-969f1b973194"
+        const todolistId = "1b82bf82-7b34-4df6-bfeb-8fc7c07e46ca"
+        const taskId = "36aefdf4-5dda-41c6-ae05-ce28e0e86168"
         tasksAPI.deleteTask(taskId, todolistId)
             .then(response => {
                 setState(response.data)
@@ -45,8 +45,8 @@ export const DeleteTask = () => {
 export const UpdateTaskTitle = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
-        const todolistId = "c9922bf3-ec54-4637-b946-beaf887341ad"
-        const taskId = "0df15c41-a51c-46f1-8517-832589a87ce8"
+        const todolistId = "1b82bf82-7b34-4df6-bfeb-8fc7c07e46ca"
+        const taskId = "457b1c68-a8ea-481d-9257-81424a27b590"
         const model: UpdateTaskModelType = {
             title: "html",
             priority: TaskPriorities.Low,

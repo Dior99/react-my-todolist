@@ -1,7 +1,7 @@
 import {action} from "@storybook/addon-actions";
-import {Task} from "../../Task";
+import {Task} from "./Task";
 import React from "react";
-import {TaskPriorities, TaskStatuses} from "../../api/tasks-api";
+import {TaskPriorities, TaskStatuses} from "../../../../api/tasks-api";
 
 export default {
     title: 'Todolist/Task Component',

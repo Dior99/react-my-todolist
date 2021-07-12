@@ -1,9 +1,9 @@
 import {
     createTodolistAC, changeTodolistFilterAC,
     changeTodolistTitleAC,
-    ChangeTodolistTitleType, FilterType,
+    FilterType,
     deleteTodolistAC, setTodolistAC, TodolistDomainType,
-    todolistsReducer
+    todolistsReducer, ChangeTodolistTitleType
 } from './todolists-reducer';
 import {v1} from 'uuid';
 
@@ -28,7 +28,6 @@ test('correct todolist should be removed', () => {
 });
 
 test('correct todolist should be added', () => {
-    let newTodolistTitle = "New Todolist";
 
     const endState = todolistsReducer(startState, createTodolistAC({
         id: '',

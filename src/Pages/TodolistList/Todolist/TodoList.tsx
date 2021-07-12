@@ -1,19 +1,19 @@
 import React, {useCallback, useEffect} from 'react';
-import {AddItemForm} from "./AddItemForm";
-import {EditableSpan} from "./EditableSpan";
+import {AddItemForm} from "../../../Component/AddItemForm/AddItemForm";
+import {EditableSpan} from "../../../Component/EditableSpan/EditableSpan";
 import {Button, ButtonGroup, IconButton} from "@material-ui/core";
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import {useDispatch, useSelector} from "react-redux";
-import {StateType} from "./Store/store";
+import {StateType} from "../../../App/store";
 import {
     addTaskTC,
     getTasks,
     deleteTaskTC,
     TodoListTaskType, updateTaskTC
-} from "./Store/tasks-reducer";
-import {Task} from "./Task";
-import {FilterType} from "./Store/todolists-reducer";
-import {TaskStatuses} from "./api/tasks-api";
+} from "../tasks-reducer";
+import {Task} from "./Task/Task";
+import {FilterType} from "../todolists-reducer";
+import {TaskStatuses} from "../../../api/tasks-api";
 
 type TodoListPropsType = {
     id: string
