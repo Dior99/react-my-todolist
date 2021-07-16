@@ -12,12 +12,19 @@ import {Grid, Paper} from "@material-ui/core";
 import {TodoList} from "./Todolist/TodoList";
 import {AddItemForm} from "../../Component/AddItemForm/AddItemForm";
 
-export function TodolistList () {
+type TodolistListPropsType = {
+    demo?: boolean
+}
+
+export function TodolistList ({demo = false}: TodolistListPropsType) {
 
     const dispatch = useDispatch();
     const todolists = useSelector<StateType, TodolistDomainType[]>(state => state.todolist)
 
     useEffect(() => {
+        if(demo) {
+            return
+        }
         dispatch(getTodolistTC)
     }, [dispatch])
 
@@ -46,9 +53,8 @@ export function TodolistList () {
         return (
             <Grid key={tl.id} item>
                 <Paper elevation={19} square={false} style={{padding: '10px'}}>
-                    <TodoList title={tl.title}
-                              id={tl.id}
-                              filter={tl.filter}
+                    <TodoList demo={demo}
+                              todolist={tl}
                               changeFilter={changeFilter}
                               removeTodoList={removeTodoList}
                               changeTodoListTitle={changeTodoListTitle}
@@ -57,6 +63,7 @@ export function TodolistList () {
             </Grid>
         )
     })
+
     return (
         <>
             <Grid container style={{padding: '20px'}}>

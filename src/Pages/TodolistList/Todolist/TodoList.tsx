@@ -12,89 +12,92 @@ import {
     TodoListTaskType, updateTaskTC
 } from "../tasks-reducer";
 import {Task} from "./Task/Task";
-import {FilterType} from "../todolists-reducer";
+import {FilterType, TodolistDomainType} from "../todolists-reducer";
 import {TaskStatuses} from "../../../api/tasks-api";
 
 type TodoListPropsType = {
-    id: string
-    title: string
+    todolist: TodolistDomainType
     changeFilter: (value: FilterType, todoListID: string) => void
-    filter: FilterType
     removeTodoList: (todoListID: string) => void
     changeTodoListTitle: (newTitle: string, todoListID: string) => void
+    demo?: boolean
 }
 
-export const TodoList = React.memo( ({id, title, changeFilter, filter, removeTodoList, changeTodoListTitle}: TodoListPropsType) => {
+export const TodoList = React.memo( ({todolist, changeFilter, removeTodoList, changeTodoListTitle, demo = false}: TodoListPropsType) => {
     //console.log('todolist')
     const dispatch = useDispatch();
     const tasks = useSelector<StateType, TodoListTaskType>(state => state.tasks)
 
+
     useEffect(() => {
-        dispatch(getTasks(id))
-    }, [dispatch, id])
+        if (demo) {
+            return
+        }
+        dispatch(getTasks(todolist.id))
+    }, [dispatch, todolist.id])
 
     // Удаление задачи
     const removeTask = useCallback( (taskId: string) => {
-        dispatch(deleteTaskTC(taskId, id))
+        dispatch(deleteTaskTC(taskId, todolist.id))
     }, [dispatch])
 
     // Изменение чекбокса
     const changeTaskStatus = useCallback( (taskId: string, status: TaskStatuses) => {
-        dispatch(updateTaskTC( id, taskId, {status}))
-    }, [dispatch, id])
+        dispatch(updateTaskTC( todolist.id, taskId, {status}))
+    }, [dispatch, todolist.id])
 
     // Изменение задачи
     const changeTaskTitle = useCallback( (taskId: string, newTitle: string) => {
-        dispatch(updateTaskTC(id, taskId, {title: newTitle}))
-    }, [dispatch, id])
+        dispatch(updateTaskTC(todolist.id, taskId, {title: newTitle}))
+    }, [dispatch, todolist.id])
 
     // Функция кампомненты AddItemForm (добавление задач)
     const addItem = useCallback( (value: string) => {
-        dispatch(addTaskTC(id, value))
-    }, [dispatch, id])
+        dispatch(addTaskTC(todolist.id, value))
+    }, [dispatch, todolist.id])
 
     // Обработчик клика (удаление Тудулиста)
     const onClickRemoveTodoList = () => {
-        removeTodoList(id)
+        removeTodoList(todolist.id)
     }
 
     // Обработчик кампоненты EditableSpan(изменение названия Тудулиста)
     const changeTodolistTitle = useCallback( (value: string) => {
-        changeTodoListTitle(value, id)
-    }, [changeTodoListTitle, id])
+        changeTodoListTitle(value, todolist.id)
+    }, [changeTodoListTitle, todolist.id])
 
     // Обработчик клика (фильтрация всех задач)
     const clickFilterAllHandler = useCallback( () => {
-        changeFilter('all', id)
-    }, [changeFilter, id])
+        changeFilter('all', todolist.id)
+    }, [changeFilter, todolist.id])
 
     // Обработчик клика (фильтрация не выполненных задач)
     const clickFilterActiveHandler = useCallback( () => {
-        changeFilter('active', id)
-    }, [changeFilter, id])
+        changeFilter('active', todolist.id)
+    }, [changeFilter, todolist.id])
 
     // Обработчик клика (фильтрация выполненных задач)
     const clickFilterCompletedHandler = useCallback( () => {
-        changeFilter('completed', id)
-    }, [changeFilter, id])
+        changeFilter('completed', todolist.id)
+    }, [changeFilter, todolist.id])
 
-    let todoListTasks = tasks[id];
+    let todoListTasks = tasks[todolist.id];
     let tasksForTodoList = todoListTasks;
-    if (filter === 'active') {
+    if (todolist.filter === 'active') {
         tasksForTodoList = todoListTasks.filter(t => t.status === TaskStatuses.New)
     }
-    if (filter === 'completed') {
+    if (todolist.filter === 'completed') {
         tasksForTodoList = todoListTasks.filter(t => t.status === TaskStatuses.Completed)
     }
 
     return (
         <div>
-            <h3 style={{textAlign: 'center'}}><EditableSpan title={title} onChange={changeTodolistTitle}/>
-                <IconButton onClick={onClickRemoveTodoList}>
-                    <HighlightOffIcon color={'secondary'}/>
+            <h3 style={{textAlign: 'center'}}><EditableSpan title={todolist.title} onChange={changeTodolistTitle}/>
+                <IconButton onClick={onClickRemoveTodoList} disabled={todolist.entityStatus === "loading"}>
+                    <HighlightOffIcon/>
                 </IconButton>
             </h3>
-            <AddItemForm addItem={addItem}/>
+            <AddItemForm addItem={addItem} disabled={todolist.entityStatus === "loading"}/>
             <div>
                 {
                     tasksForTodoList.map(el => {
@@ -113,13 +116,13 @@ export const TodoList = React.memo( ({id, title, changeFilter, filter, removeTod
             <div>
                 <ButtonGroup size={'small'} fullWidth={true} style={{paddingTop: '5px'}}>
                     <Button onClick={clickFilterAllHandler}
-                            variant={filter === 'all' ? "contained" : "outlined"}>All
+                            variant={todolist.filter === 'all' ? "contained" : "outlined"}>All
                     </Button>
                     <Button color={'primary'} onClick={clickFilterActiveHandler}
-                            variant={filter === 'active' ? "contained" : "outlined"}>Active
+                            variant={todolist.filter === 'active' ? "contained" : "outlined"}>Active
                     </Button>
                     <Button color={'secondary'} onClick={clickFilterCompletedHandler}
-                            variant={filter === 'completed' ? "contained" : "outlined"}>Completed
+                            variant={todolist.filter === 'completed' ? "contained" : "outlined"}>Completed
                     </Button>
                 </ButtonGroup>
             </div>

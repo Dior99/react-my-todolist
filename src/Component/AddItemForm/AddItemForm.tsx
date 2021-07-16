@@ -4,9 +4,10 @@ import AddBoxIcon from '@material-ui/icons/AddBox';
 
 export type AddItemFormPropsType = {
     addItem: (value: string) => void
+    disabled?: boolean
 }
 
-export const AddItemForm = React.memo( (props: AddItemFormPropsType) => {
+export const AddItemForm = React.memo( ({addItem, disabled = false}: AddItemFormPropsType) => {
     console.log('AddItemForm')
     const [title, setTitle] = useState('')
     const [error, setError] = useState<string | null>(null)
@@ -14,7 +15,7 @@ export const AddItemForm = React.memo( (props: AddItemFormPropsType) => {
     // Обработчик нажатия клавиши (добавления задачи)
     const onKeyPressAddTask = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
-            props.addItem(title)
+            addItem(title)
             setTitle('')
         }
         if(error !== null) {
@@ -30,7 +31,7 @@ export const AddItemForm = React.memo( (props: AddItemFormPropsType) => {
     // Обработчик клика (добавления задачи)
     const onClickAddTask = () => {
         if (title.trim() !== "") {
-            props.addItem(title)
+            addItem(title)
             setTitle('')
         } else {
             setError('Title is required')
@@ -40,6 +41,7 @@ export const AddItemForm = React.memo( (props: AddItemFormPropsType) => {
     return (
         <div>
             <TextField error={!!error}
+                       disabled={disabled}
                        variant={'outlined'}
                        label='Task title'
                        value={title}
@@ -47,8 +49,9 @@ export const AddItemForm = React.memo( (props: AddItemFormPropsType) => {
                        helperText={error}
                        onChange={onChangeAddTask}/>
             <IconButton color={'primary'}
-                        onClick={onClickAddTask}>
-                <AddBoxIcon color={'primary'}/>
+                        onClick={onClickAddTask}
+                        disabled={disabled}>
+                <AddBoxIcon/>
             </IconButton>
         </div>
     )
