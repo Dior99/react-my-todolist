@@ -1,6 +1,7 @@
 import {todolistsAPI, TodolistType} from "../../api/todolists-api";
 import {Dispatch} from "redux";
-import {RequestStatusType, setAppStatusAC, SetStatusAT} from "../../App/app-reducer";
+import {RequestStatusType, SetAppErrorAT, setAppStatusAC, SetAppStatusAT} from "../../App/app-reducer";
+import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
 
 const initialState: TodolistDomainType[] = []
 
@@ -52,21 +53,38 @@ export const deleteTodolistTC = (todolistId: string) => (dispatch: Dispatch<Acti
             dispatch(deleteTodolistAC(todolistId))
             dispatch(setAppStatusAC("succeeded"))
         })
+        .catch(error => {
+            handleServerNetworkError(error.messages, dispatch)
+        })
 }
 export const createTodolistTC = (title: string) => (dispatch: Dispatch<ActionType>) => {
     dispatch(setAppStatusAC("loading"))
     todolistsAPI.createTodolist(title)
         .then((response) => {
-            dispatch(createTodolistAC(response.data.data.item))
-            dispatch(setAppStatusAC("succeeded"))
+            if (response.data.resultCode === 0) {
+                dispatch(createTodolistAC(response.data.data.item))
+                dispatch(setAppStatusAC("succeeded"))
+            } else {
+                handleServerAppError(response.data, dispatch)
+            }
+        })
+        .catch(error => {
+            handleServerNetworkError(error.messages, dispatch)
         })
 }
 export const changerTodolistTitleTC = (todolistId: string, title: string) => (dispatch: Dispatch<ActionType>) => {
     dispatch(setAppStatusAC("loading"))
     todolistsAPI.updateTodolist(todolistId, title)
         .then(response => {
-            dispatch(changeTodolistTitleAC(todolistId, title))
-            dispatch(setAppStatusAC("succeeded"))
+            if( response.data.resultCode === 0) {
+                dispatch(changeTodolistTitleAC(todolistId, title))
+                dispatch(setAppStatusAC("succeeded"))
+            } else {
+                handleServerAppError(response.data, dispatch)
+            }
+        })
+        .catch(error => {
+            handleServerNetworkError(error.data, dispatch)
         })
 }
 
@@ -83,7 +101,9 @@ type ActionType =
     | ChangeTodolistTitleType
     | ReturnType<typeof changeTodolistFilterAC>
     | SetTodolistType
-    | SetStatusAT
+    | SetAppStatusAT
+    | SetAppErrorAT
+    | SetAppStatusAT
     | setEntityStatusType
 
 export type DeleteTodolistType = ReturnType<typeof deleteTodolistAC>
