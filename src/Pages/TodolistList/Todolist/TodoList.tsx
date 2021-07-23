@@ -38,7 +38,7 @@ export const TodoList = React.memo( ({todolist, changeFilter, removeTodoList, ch
 
     // Удаление задачи
     const removeTask = useCallback( (taskId: string) => {
-        dispatch(deleteTaskTC(taskId, todolist.id))
+        dispatch(deleteTaskTC(todolist.id, taskId))
     }, [dispatch])
 
     // Изменение чекбокса
@@ -92,7 +92,10 @@ export const TodoList = React.memo( ({todolist, changeFilter, removeTodoList, ch
 
     return (
         <div>
-            <h3 style={{textAlign: 'center'}}><EditableSpan title={todolist.title} onChange={changeTodolistTitle}/>
+            <h3 style={{textAlign: 'center'}}>
+                <EditableSpan title={todolist.title}
+                              disabled={todolist.entityStatus === "loading"}
+                              onChange={changeTodolistTitle}/>
                 <IconButton onClick={onClickRemoveTodoList} disabled={todolist.entityStatus === "loading"}>
                     <HighlightOffIcon/>
                 </IconButton>

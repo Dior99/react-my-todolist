@@ -17,14 +17,14 @@ export const TaskBaseExample = () => {
     return <>
         <Task removeTask={removeTaskCallback}
               task={ {id: '1', title: 'HTML', status: TaskStatuses.Completed, todoListId: "todolistId1", description: '',
-                  priority: TaskPriorities.Low, deadline: '', startDate: '', addedDate: '', order: 0} }
+                  priority: TaskPriorities.Low, deadline: '', startDate: '', addedDate: '', order: 0, entityStatus: "idle"} }
               changeTaskStatus={changeTaskStatusCallback}
               // todolistId={"todolistId1"}
               changeTaskTitle={changeTaskTitleCallback}/>
 
         <Task removeTask={removeTaskCallback}
               task={ {id: '2', title: 'REACT', status: TaskStatuses.New, todoListId: "todolistId1", description: '',
-                  priority: TaskPriorities.Low, deadline: '', startDate: '', addedDate: '', order: 0} }
+                  priority: TaskPriorities.Low, deadline: '', startDate: '', addedDate: '', order: 0, entityStatus: "loading"} }
               changeTaskStatus={changeTaskStatusCallback}
               // todolistId={"todolistId1"}
               changeTaskTitle={changeTaskTitleCallback}/>

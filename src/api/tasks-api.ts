@@ -1,4 +1,5 @@
 import {instance} from "./todolists-api";
+import {RequestStatusType} from "../App/app-reducer";
 
 export const tasksAPI = {
     getTasks (todolistId: string) {
@@ -9,7 +10,7 @@ export const tasksAPI = {
         return instance.post<ResponseType<{item: TaskType}>>(`/todo-lists/${todolistId}/tasks`, {title});
     },
 
-    deleteTask(taskId: string, todolistId: string) {
+    deleteTask(todolistId: string, taskId: string) {
         return instance.delete<ResponseType>(`/todo-lists/${todolistId}/tasks/${taskId}`);
     },
 
@@ -29,6 +30,7 @@ export type TaskType = {
     startDate: string
     deadline: string
     addedDate: string
+    entityStatus: RequestStatusType
 }
 
 export type UpdateTaskModelType = {

@@ -23,15 +23,19 @@ const initialGlobalState: StateType = {
     tasks: {
         ["todolistId1"]: [
             {id: v1(), title: "HTML", status: TaskStatuses.New, todoListId: "todolistId1", description: '',
-                priority: TaskPriorities.Low, deadline: '', startDate: '', addedDate: '', order: 0},
+                priority: TaskPriorities.Low, deadline: '', startDate: '', addedDate: '',
+                order: 0, entityStatus: "loading"},
             {id: v1(), title: "CSS", status: TaskStatuses.New, todoListId: "todolistId1", description: '',
-                priority: TaskPriorities.Low, deadline: '', startDate: '', addedDate: '', order: 0},
+                priority: TaskPriorities.Low, deadline: '', startDate: '', addedDate: '',
+                order: 0, entityStatus: "idle"},
         ],
         ["todolistId2"]: [
             {id: v1(), title: "Milk", status: TaskStatuses.Completed, todoListId: "todolistId2", description: '',
-                priority: TaskPriorities.Low, deadline: '', startDate: '', addedDate: '', order: 0},
+                priority: TaskPriorities.Low, deadline: '', startDate: '', addedDate: '',
+                order: 0, entityStatus: "idle"},
             {id: v1(), title: "Bread", status: TaskStatuses.New, todoListId: "todolistId2", description: '',
-                priority: TaskPriorities.Low, deadline: '', startDate: '', addedDate: '', order: 0},
+                priority: TaskPriorities.Low, deadline: '', startDate: '', addedDate: '',
+                order: 0, entityStatus: "loading"},
         ]
     },
     app: {

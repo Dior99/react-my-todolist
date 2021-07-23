@@ -4,32 +4,33 @@ import {TextField} from "@material-ui/core";
 type EditableSpanPropsType = {
     title: string
     onChange: (newTitle: string) => void
+    disabled?: boolean
 }
 
-export const EditableSpan = React.memo( (props: EditableSpanPropsType) => {
+export const EditableSpan = React.memo(({title, onChange, disabled = false}: EditableSpanPropsType) => {
     //console.log('EditableSpan')
-    const [title, setTitle] = useState<string>('')
+    const [value, setValue] = useState<string>(title)
     const [editMode, setEditMode] = useState<boolean>(false)
 
-    const activeEditMode = () => {
-        setEditMode(true)
-        setTitle(props.title)
+    const onEditMode = () => {
+        !disabled && setEditMode(true)
     }
+
     const activeViewMode = () => {
         setEditMode(false)
-        props.onChange(title)
+        onChange(value)
     }
 
     const changeTaskTitle = (e: ChangeEvent<HTMLInputElement>) => {
-       setTitle(e.currentTarget.value)
+        setValue(e.currentTarget.value)
     }
 
     return (
         editMode
-        ? <TextField value={title}
-                 onBlur={activeViewMode}
-                 onChange={changeTaskTitle}
-                 autoFocus/>
-        : <span onDoubleClick={activeEditMode}>{props.title}</span>
+            ? <TextField value={value}
+                         onBlur={activeViewMode}
+                         onChange={changeTaskTitle}
+                         autoFocus/>
+            : <span onDoubleClick={onEditMode}>{title}</span>
     )
 })

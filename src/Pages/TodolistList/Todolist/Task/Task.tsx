@@ -32,11 +32,12 @@ export const Task = React.memo( ({removeTask, changeTaskStatus, changeTaskTitle,
     return (
         <div style={completedTasks}>
             <Checkbox checked={task.status === TaskStatuses.Completed}
+                      disabled={task.entityStatus === "loading"}
                       size={'small'}
                       onChange={onClickChecked}/>
-            <EditableSpan title={task.title} onChange={onChangeTaskTitle}/>
-            <IconButton onClick={onClickRemoveTask}>
-                <Delete color={'secondary'}/>
+            <EditableSpan title={task.title} onChange={onChangeTaskTitle} disabled={task.entityStatus === "loading"}/>
+            <IconButton onClick={onClickRemoveTask} disabled={task.entityStatus === "loading"}>
+                <Delete/>
             </IconButton>
         </div>
     )

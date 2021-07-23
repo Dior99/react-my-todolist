@@ -82,7 +82,7 @@ test('todolists should be set the state', () => {
 
 test('status should be changed', () => {
 
-    const action = setEntityStatusAC(todolistId2, "succeeded")
+    const action = setEntityStatusAC("succeeded", todolistId2)
 
     const endState = todolistsReducer(startState, action);
 
