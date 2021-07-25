@@ -1,8 +1,10 @@
 import React from 'react'
 import {Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, TextField, Button, Grid} from '@material-ui/core'
 import {useFormik} from "formik";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {loginTC} from "./auth-reducer";
+import {StateType} from "../../App/store";
+import { Redirect } from 'react-router-dom';
 
 type ErrorsDataType = {
     email?: string
@@ -11,8 +13,8 @@ type ErrorsDataType = {
 }
 
 export const Login = () => {
-
     const dispatch = useDispatch();
+    const isLoginIn = useSelector<StateType, boolean>(state => state.auth.isLoginIn)
 
     const formik = useFormik({
         initialValues: {
@@ -43,6 +45,10 @@ export const Login = () => {
             dispatch(loginTC(values))
         },
     });
+
+    if (isLoginIn) {
+        return <Redirect to={"/"}/>
+    }
 
     return <Grid container justify="center">
         <Grid item xs={4}>

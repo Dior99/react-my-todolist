@@ -3,24 +3,29 @@ import {Dispatch} from "redux";
 import {loginAPI, LoginDataType} from "../../api/todolists-api";
 import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
 
-export const initialState = {
+export const initialState: initialStateType = {
+    isLoginIn: false
 }
 
 export type InitialStateType = typeof initialState
 
 export const authReducer = (state: InitialStateType = initialState, action: ActionsType): InitialStateType => {
     switch (action.type) {
-
+        case "AUTH/SET-IS-LOGIN-IN":
+            return {...state, isLoginIn: action.value}
         default:
             return state
     }
 }
+
+export const setIsLoginIn = (value: boolean) => ({type: "AUTH/SET-IS-LOGIN-IN", value} as const)
 
 export const loginTC = (data: LoginDataType) => (dispatch: Dispatch) => {
     dispatch(setAppStatusAC("loading"))
     loginAPI.login(data)
         .then((response) => {
             if(response.data.resultCode === 0) {
+                dispatch(setIsLoginIn(true))
                 dispatch(setAppStatusAC("succeeded"))
             } else {
                 handleServerAppError(response.data, dispatch)
@@ -31,5 +36,10 @@ export const loginTC = (data: LoginDataType) => (dispatch: Dispatch) => {
         })
 }
 
-
-type ActionsType = SetAppStatusAT | SetAppErrorAT
+type initialStateType = {
+    isLoginIn: boolean
+}
+type ActionsType =
+    | ReturnType<typeof setIsLoginIn>
+    | SetAppStatusAT
+    | SetAppErrorAT
