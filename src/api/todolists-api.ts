@@ -18,6 +18,12 @@ export const todolistsAPI =  {
     }
 }
 
+export const loginAPI = {
+    login(data: LoginDataType) {
+        return instance.post<ResponseType<{userId: number}>>(`/auth/login`, data)
+    }
+}
+
 export const instance = axios.create({
     baseURL: "https://social-network.samuraijs.com/api/1.1",
     withCredentials: true,
@@ -25,6 +31,13 @@ export const instance = axios.create({
         "API-KEY": "de2d7fd1-a2fc-4e66-9075-a63ed9254ecb"
     }
 })
+
+export type LoginDataType = {
+    email: string
+    password: string
+    rememberMe: boolean
+    captcha?: string
+}
 
 export type TodolistType = {
     id: string
