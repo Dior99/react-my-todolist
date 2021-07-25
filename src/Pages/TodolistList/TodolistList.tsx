@@ -11,6 +11,7 @@ import React, {useCallback, useEffect} from "react";
 import {Grid, Paper} from "@material-ui/core";
 import {TodoList} from "./Todolist/TodoList";
 import {AddItemForm} from "../../Component/AddItemForm/AddItemForm";
+import {Redirect} from "react-router-dom";
 
 type TodolistListPropsType = {
     demo?: boolean
@@ -20,9 +21,10 @@ export function TodolistList ({demo = false}: TodolistListPropsType) {
 
     const dispatch = useDispatch();
     const todolists = useSelector<StateType, TodolistDomainType[]>(state => state.todolist)
+    const isLoginIn = useSelector<StateType, boolean>(state => state.auth.isLoginIn)
 
     useEffect(() => {
-        if(demo) {
+        if(demo || !isLoginIn) {
             return
         }
         dispatch(getTodolistTC)
@@ -63,6 +65,10 @@ export function TodolistList ({demo = false}: TodolistListPropsType) {
             </Grid>
         )
     })
+
+    if(!isLoginIn) {
+        return <Redirect to={"/login"}/>
+    }
 
     return (
         <>

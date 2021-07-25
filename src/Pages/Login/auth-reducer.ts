@@ -36,6 +36,22 @@ export const loginTC = (data: LoginDataType) => (dispatch: Dispatch) => {
         })
 }
 
+export const logoutTC = () => (dispatch: Dispatch) => {
+    dispatch(setAppStatusAC("loading"))
+    loginAPI.logout()
+        .then((response) => {
+            if(response.data.resultCode === 0) {
+                dispatch(setIsLoginIn(false))
+                dispatch(setAppStatusAC("succeeded"))
+            } else {
+                handleServerAppError(response.data, dispatch)
+            }
+        })
+        .catch(error => {
+            handleServerNetworkError(error.messages, dispatch)
+        })
+}
+
 type initialStateType = {
     isLoginIn: boolean
 }

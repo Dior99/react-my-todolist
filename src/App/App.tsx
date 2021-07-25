@@ -1,14 +1,24 @@
 import React, {useEffect} from 'react';
 import "./App.css"
-import {AppBar, Button, Container, IconButton, LinearProgress, Toolbar, Typography} from '@material-ui/core';
+import {
+    AppBar,
+    Button,
+    CircularProgress,
+    Container,
+    IconButton,
+    LinearProgress,
+    Toolbar,
+    Typography
+} from '@material-ui/core';
 import {Menu} from "@material-ui/icons";
 import {TodolistList} from '../Pages/TodolistList/TodolistList';
 import {ErrorSnackbar} from "../Component/ErrorSnackbar/ErrorSnackbar";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./store";
-import {RequestStatusType} from "./app-reducer";
+import {RequestStatusType, setInitializedTC} from "./app-reducer";
 import {BrowserRouter, Route} from "react-router-dom";
 import {Login} from "../Pages/Login/Login";
+import {logoutTC} from "../Pages/Login/auth-reducer";
 
 type AppPropsType = {
     demo?: boolean
@@ -16,13 +26,30 @@ type AppPropsType = {
 
 export function App({demo = false}: AppPropsType) {
 
+    const dispatch = useDispatch()
+    const initialized = useSelector<StateType, boolean>(state => state.app.initialized)
+    const isLoginIn = useSelector<StateType, boolean>(state => state.auth.isLoginIn)
+    const status = useSelector<StateType, RequestStatusType>(state => state.app.status)
+
     useEffect(() => {
         if (demo) {
             return
         }
     })
 
-    const status = useSelector<StateType, RequestStatusType>(state => state.app.status)
+    useEffect(() => {
+        dispatch(setInitializedTC())
+    }, [])
+
+    if(!initialized) {
+        return <div style={{position: 'fixed', width: '100%', top: '50%', left: '50%'}}>
+            <CircularProgress/>
+        </div>
+    }
+
+    const logOutHandler = () => {
+        dispatch(logoutTC())
+    }
 
 
     return (
@@ -39,7 +66,9 @@ export function App({demo = false}: AppPropsType) {
                         <Typography variant="h6">
                             TodoList
                         </Typography>
-                        <Button variant={'outlined'} color="inherit">Login</Button>
+                        {isLoginIn && <Button onClick={logOutHandler}
+                                              variant={'outlined'}
+                                              color="inherit">Log out</Button>}
                     </Toolbar>
                     {status === 'loading' && <LinearProgress/>}
                 </AppBar>

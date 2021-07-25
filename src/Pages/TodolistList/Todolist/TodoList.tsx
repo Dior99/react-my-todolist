@@ -28,7 +28,6 @@ export const TodoList = React.memo( ({todolist, changeFilter, removeTodoList, ch
     const dispatch = useDispatch();
     const tasks = useSelector<StateType, TodoListTaskType>(state => state.tasks)
 
-
     useEffect(() => {
         if (demo) {
             return
