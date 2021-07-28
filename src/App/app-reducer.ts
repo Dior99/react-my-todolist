@@ -31,7 +31,7 @@ export const setInitializedTC = () => (dispatch: Dispatch) => {
     loginAPI.me()
         .then(response => {
             if(response.data.resultCode === 0) {
-                dispatch(setIsLoginIn(true))
+                dispatch(setIsLoginIn({value: true}))
             }
             dispatch(setInitializedAC(true))
         })
