@@ -1,4 +1,4 @@
-import {CreateTodolistType, DeleteTodolistType, SetTodolistType} from "./todolists-reducer";
+import {createTodolist, CreateTodolistType, deleteTodolist, DeleteTodolistType, setTodolist, SetTodolistType} from "./todolists-reducer";
 import {TaskPriorities, tasksAPI, TaskStatuses, TaskType, UpdateTaskModelType} from "../../api/tasks-api";
 import {Dispatch} from "redux";
 import {StateType} from "../../App/store";
@@ -7,7 +7,7 @@ import {handleServerAppError, handleServerNetworkError} from "../../utils/error-
 
 const initialState: TodoListTaskType = {}
 
-export function tasksReducer(state: TodoListTaskType = initialState, action: ActionType): TodoListTaskType {
+export function tasksReducer(state: TodoListTaskType = initialState, action: any): TodoListTaskType {
     switch (action.type) {
         case "DELETE-TASK":
             return {...state, [action.todolistId]: state[action.todolistId].filter(t => (t.id !== action.taskId))}
@@ -23,16 +23,16 @@ export function tasksReducer(state: TodoListTaskType = initialState, action: Act
                     ...state, [action.todolistId]: state[action.todolistId].map(t => (t.id === action.taskId ?
                         {...t, entityStatus: action.status} : t))
             }
-        case "CREATE-TODOLIST":
-            return {...state, [action.todolist.id]: []}
-        case "DELETE-TODOLIST": {
+        case createTodolist.type:
+            return {...state, [action.payload.todolist.id]: []}
+        case deleteTodolist.type: {
             const copyState = {...state}
-            delete copyState[action.id]
+            delete copyState[action.payload.id]
             return copyState
         }
-        case "SET-TODOLIST": {
+        case setTodolist.type: {
             const copyState = {...state}
-            action.todolist.forEach(tl => {
+            action.payload.todolist.forEach((tl: any) => {
                 copyState[tl.id] = []
             })
             return copyState

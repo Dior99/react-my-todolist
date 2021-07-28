@@ -1,7 +1,7 @@
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "../../App/store";
 import {
-    changerTodolistTitleTC, changeTodolistFilterAC,
+    changerTodolistTitleTC, changeTodolistFilter,
     createTodolistTC,
     deleteTodolistTC, FilterType,
     getTodolistTC,
@@ -48,7 +48,7 @@ export function TodolistList ({demo = false}: TodolistListPropsType) {
 
     // Фильтрация задач
     const changeFilter = useCallback( (value: FilterType, todoListID: string) => {
-        dispatch(changeTodolistFilterAC(todoListID, value))
+        dispatch(changeTodolistFilter({id: todoListID, filter: value}))
     }, [dispatch])
 
     const todoList = todolists.map(tl => {
