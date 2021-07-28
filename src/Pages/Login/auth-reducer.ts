@@ -1,4 +1,4 @@
-import {setAppStatusAC} from "../../App/app-reducer";
+import {setAppStatus} from "../../App/app-reducer";
 import {Dispatch} from "redux";
 import {loginAPI, LoginDataType} from "../../api/todolists-api";
 import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
@@ -22,12 +22,12 @@ export const authReducer = slice.reducer
 export const {setIsLoginIn} = slice.actions
 
 export const loginTC = (data: LoginDataType) => (dispatch: Dispatch) => {
-    dispatch(setAppStatusAC("loading"))
+    dispatch(setAppStatus({status: "loading"}))
     loginAPI.login(data)
         .then((response) => {
             if(response.data.resultCode === 0) {
                 dispatch(setIsLoginIn({value: true}))
-                dispatch(setAppStatusAC("succeeded"))
+                dispatch(setAppStatus({status: "succeeded"}))
             } else {
                 handleServerAppError(response.data, dispatch)
             }
@@ -37,12 +37,12 @@ export const loginTC = (data: LoginDataType) => (dispatch: Dispatch) => {
         })
 }
 export const logoutTC = () => (dispatch: Dispatch) => {
-    dispatch(setAppStatusAC("loading"))
+    dispatch(setAppStatus({status: "loading"}))
     loginAPI.logout()
         .then((response) => {
             if(response.data.resultCode === 0) {
                 dispatch(setIsLoginIn({value: false}))
-                dispatch(setAppStatusAC("succeeded"))
+                dispatch(setAppStatus({status: "succeeded"}))
             } else {
                 handleServerAppError(response.data, dispatch)
             }
