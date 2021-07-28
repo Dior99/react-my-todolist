@@ -80,12 +80,12 @@ export const changerTodolistTitleTC = (todolistId: string, title: string) => (di
     todolistsAPI.updateTodolist(todolistId, title)
         .then(response => {
             if(response.data.resultCode === 0) {
-                dispatch(changeTodolistTitle({id: todolistId,title: title}))
+                dispatch(changeTodolistTitle({id: todolistId, title}))
                 dispatch(setAppStatus({status: "succeeded"}))
                 dispatch(setEntityStatus({status: "succeeded",id: todolistId}))
             } else {
                 handleServerAppError(response.data, dispatch)
-                dispatch(setEntityStatus({status: "failed",id: todolistId}))
+                dispatch(setEntityStatus({status: "failed", id: todolistId}))
             }
         })
         .catch(error => {

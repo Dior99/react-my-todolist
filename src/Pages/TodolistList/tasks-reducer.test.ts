@@ -1,10 +1,10 @@
 import {
-    createTaskAC,
-    deleteTaskAC, setEntityStatusTaskAC,
-    setTasksAC,
+    createTask,
+    deleteTask, setEntityStatusTask,
+    setTasks,
     tasksReducer,
     TodoListTaskType,
-    updateTaskAC
+    updateTask
 } from './tasks-reducer';
 import {createTodolist, deleteTodolist} from "./todolists-reducer";
 import {TaskPriorities, TaskStatuses} from "../../api/tasks-api";
@@ -45,7 +45,7 @@ beforeEach(() => {
 })
 
 test('correct task should be deleted from correct array', () => {
-    const action = deleteTaskAC("todolistId2","2");
+    const action = deleteTask({todolistId: "todolistId2", taskId: "2"});
     const endState = tasksReducer(startState, action)
 
     expect(endState["todolistId1"].length).toBe(3)
@@ -54,18 +54,20 @@ test('correct task should be deleted from correct array', () => {
 });
 
 test('correct task should be added to correct array', () => {
-    const action = createTaskAC({
-        todoListId: "todolistId2",
-        title: "juce",
-        status: TaskStatuses.New,
-        addedDate: "",
-        deadline: "",
-        description: "",
-        order: 0,
-        priority: 0,
-        startDate: "",
-        id: "id",
-        entityStatus: "idle"
+    const action = createTask({
+        task: {
+            todoListId: "todolistId2",
+            title: "juce",
+            status: TaskStatuses.New,
+            addedDate: "",
+            deadline: "",
+            description: "",
+            order: 0,
+            priority: 0,
+            startDate: "",
+            id: "id",
+            entityStatus: "idle"
+        }
     });
 
     const endState = tasksReducer(startState, action)
@@ -78,7 +80,13 @@ test('correct task should be added to correct array', () => {
 })
 
 test('status of specified task should be changed', () => {
-    const action = updateTaskAC("todolistId2", "2", {status: TaskStatuses.New});
+    const action = updateTask({
+        todolistId: "todolistId2",
+        taskId: "2",
+        model: {
+            status: TaskStatuses.New
+        }
+    });
 
     const endState = tasksReducer(startState, action)
 
@@ -87,7 +95,13 @@ test('status of specified task should be changed', () => {
 });
 
 test('title of specified task should be changed', () => {
-    const action = updateTaskAC("todolistId2", "2", {title: "New Title"} );
+    const action = updateTask({
+        todolistId: "todolistId2",
+        taskId: "2",
+        model: {
+            title: "New Title"
+        }
+    });
 
     const endState = tasksReducer(startState, action)
 
@@ -131,7 +145,7 @@ test('property with todolistId should be deleted', () => {
 });
 
 test('tasks should be added for todolist', () => {
-    const action = setTasksAC(startState['todolistId1'], 'todolistId1')
+    const action = setTasks({ tasks: startState['todolistId1'], todolistId: 'todolistId1'})
 
     const endState = tasksReducer({
         'todolistId2': [],
@@ -144,7 +158,7 @@ test('tasks should be added for todolist', () => {
 
 test('task status should be changed', () => {
 
-    const action = setEntityStatusTaskAC("todolistId2", '3', "succeeded")
+    const action = setEntityStatusTask({todolistId: "todolistId2",taskId: '3',status: "succeeded"})
 
     const endState = tasksReducer(startState, action);
 
