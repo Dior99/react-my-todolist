@@ -16,7 +16,7 @@ import {ErrorSnackbar} from "../Component/ErrorSnackbar/ErrorSnackbar";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./store";
 import {RequestStatusType, setInitializedTC} from "./app-reducer";
-import {BrowserRouter, Route} from "react-router-dom";
+import {Route} from "react-router-dom";
 import {Login} from "../Pages/Login/Login";
 import {logoutTC} from "../Pages/Login/auth-reducer";
 
@@ -53,7 +53,6 @@ export function App({demo = false}: AppPropsType) {
 
 
     return (
-        <BrowserRouter>
             <div className="App">
                 <ErrorSnackbar/>
                 <AppBar position="static">
@@ -77,7 +76,6 @@ export function App({demo = false}: AppPropsType) {
                     <Route path={"/login"} render={() => <Login/>}/>
                 </Container>
             </div>
-        </BrowserRouter>
     )
 }
 
