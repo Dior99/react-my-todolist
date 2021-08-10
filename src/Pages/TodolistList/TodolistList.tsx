@@ -1,10 +1,10 @@
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "../../App/store";
 import {
-    changerTodolistTitleTC, changeTodolistFilter,
-    createTodolistTC,
-    deleteTodolistTC, FilterType,
-    getTodolistTC,
+    changeTodolistTitle, changeTodolistFilter,
+    createTodolist,
+    deleteTodolist, FilterType,
+    getTodolist,
     TodolistDomainType
 } from "./todolists-reducer";
 import React, {useCallback, useEffect} from "react";
@@ -27,23 +27,23 @@ export function TodolistList ({demo = false}: TodolistListPropsType) {
         if(demo || !isLoginIn) {
             return
         }
-        dispatch(getTodolistTC)
+        dispatch(getTodolist())
     }, [dispatch])
 
     // Todolist:
     // Удаление Тудулиста
     const removeTodoList = useCallback( (todoListID: string) => {
-        dispatch(deleteTodolistTC(todoListID))
+        dispatch(deleteTodolist(todoListID))
     }, [dispatch])
 
     // Добавление Тудулиста
     const addTodoList = useCallback( (newTitle: string) => {
-        dispatch(createTodolistTC(newTitle))
+        dispatch(createTodolist(newTitle))
     }, [dispatch])
 
     // Изменение названия Тудулиста
-    const changeTodoListTitle = useCallback( (newTitle: string, todoListID: string) => {
-        dispatch(changerTodolistTitleTC(todoListID, newTitle))
+    const changeTodoListTitle = useCallback( (todolistId: string, title: string, ) => {
+        dispatch(changeTodolistTitle({todolistId, title}))
     }, [dispatch])
 
     // Фильтрация задач

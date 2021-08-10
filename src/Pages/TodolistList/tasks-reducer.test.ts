@@ -102,7 +102,7 @@ test('title of specified task should be changed', () => {
         model: {
             title: "New Title"
         }
-    }, 'requestId', {todolistId: "todolistId2", taskId: "2", domainModel: {title: "New Title"}});
+    }, "requestId", {todolistId: "todolistId2", taskId: "2", domainModel: {title: "New Title"}});
 
     const endState = tasksReducer(startState, action)
 
@@ -111,14 +111,14 @@ test('title of specified task should be changed', () => {
 });
 
 test('new array should be added when new todolist is added', () => {
-    const action = createTodolist({
+    const action = createTodolist.fulfilled({
         todolist: {
             id: 'id',
             title: "new todolist",
             addedDate: '',
             order: 0,
         }
-    });
+    }, "requestId", "new todolist");
 
     const endState = tasksReducer(startState, action)
 
@@ -134,7 +134,7 @@ test('new array should be added when new todolist is added', () => {
 });
 
 test('property with todolistId should be deleted', () => {
-    const action = deleteTodolist({id: "todolistId2"});
+    const action = deleteTodolist.fulfilled({todolistId: "todolistId2"}, "requestId","todolistId2");
 
     const endState = tasksReducer(startState, action)
 

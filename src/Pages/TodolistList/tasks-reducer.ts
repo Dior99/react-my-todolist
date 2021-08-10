@@ -1,41 +1,45 @@
-import {createTodolist, deleteTodolist, setTodolist} from "./todolists-reducer";
+import {createTodolist, deleteTodolist, getTodolist} from "./todolists-reducer";
 import {TaskPriorities, tasksAPI, TaskStatuses, TaskType, UpdateTaskModelType} from "../../api/tasks-api";
 import {StateType} from "../../App/store";
 import {RequestStatusType, setAppStatus} from "../../App/app-reducer";
 import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 
-const initialState: TodoListTaskType = {}
-
 export const getTasks = createAsyncThunk("tasks/getTasks",
-    async (todolistId: string, thunkAPI) => {
-        thunkAPI.dispatch(setAppStatus({status: "loading"}))
-        const res = await tasksAPI.getTasks(todolistId)
-        thunkAPI.dispatch(setAppStatus({status: "succeeded"}))
-        return {tasks: res.data.items, todolistId: todolistId}
+    async (todolistId: string, {dispatch, rejectWithValue}) => {
+        dispatch(setAppStatus({status: "loading"}))
+        try {
+            const res = await tasksAPI.getTasks(todolistId)
+            dispatch(setAppStatus({status: "succeeded"}))
+            return {tasks: res.data.items, todolistId: todolistId}
+        } catch (error) {
+            handleServerNetworkError(error.messages, dispatch)
+            dispatch(setAppStatus({status: "failed"}))
+            return rejectWithValue(null)
+        }
     })
 
 export const deleteTask = createAsyncThunk("tasks/deleteTask",
-    async (param: { todolistId: string, taskId: string }, thunkAPI) => {
-        thunkAPI.dispatch(setEntityStatusTask({todolistId: param.todolistId, taskId: param.taskId, status: "loading"}))
-        thunkAPI.dispatch(setAppStatus({status: "loading"}))
+    async (param: { todolistId: string, taskId: string }, {dispatch, rejectWithValue}) => {
+        dispatch(setEntityStatusTask({todolistId: param.todolistId, taskId: param.taskId, status: "loading"}))
+        dispatch(setAppStatus({status: "loading"}))
         try {
             await tasksAPI.deleteTask(param.todolistId, param.taskId)
-            thunkAPI.dispatch(setAppStatus({status: "succeeded"}))
-            thunkAPI.dispatch(setEntityStatusTask({
+            dispatch(setAppStatus({status: "succeeded"}))
+            dispatch(setEntityStatusTask({
                 todolistId: param.todolistId,
                 taskId: param.taskId,
                 status: "succeeded"
             }))
             return {todolistId: param.todolistId, taskId: param.taskId}
         } catch (error) {
-            handleServerNetworkError(error.messages, thunkAPI.dispatch)
-            thunkAPI.dispatch(setEntityStatusTask({
+            handleServerNetworkError(error.messages, dispatch)
+            dispatch(setEntityStatusTask({
                 todolistId: param.todolistId,
                 taskId: param.taskId,
                 status: "failed"
             }))
-            return thunkAPI.rejectWithValue(null)
+            return rejectWithValue(null)
         }
     })
 
@@ -110,7 +114,7 @@ export const updateTask = createAsyncThunk("tasks/updateTask",
 
 const slice = createSlice({
     name: 'tasks',
-    initialState,
+    initialState: {} as TodoListTaskType,
     reducers: {
         setEntityStatusTask(state, action: PayloadAction<{ todolistId: string, taskId: string, status: RequestStatusType }>) {
             const tasks = state[action.payload.todolistId];
@@ -121,13 +125,13 @@ const slice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(createTodolist, (state, action) => {
+        builder.addCase(createTodolist.fulfilled, (state, action) => {
             state[action.payload.todolist.id] = [];
         });
-        builder.addCase(deleteTodolist, (state, action) => {
-            delete state[action.payload.id]
+        builder.addCase(deleteTodolist.fulfilled, (state, action) => {
+            delete state[action.payload.todolistId]
         });
-        builder.addCase(setTodolist, (state, action) => {
+        builder.addCase(getTodolist.fulfilled, (state, action) => {
             action.payload.todolist.forEach(tl => {
                 state[tl.id] = []
             })

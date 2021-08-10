@@ -19,7 +19,7 @@ type TodoListPropsType = {
     todolist: TodolistDomainType
     changeFilter: (value: FilterType, todoListID: string) => void
     removeTodoList: (todoListID: string) => void
-    changeTodoListTitle: (newTitle: string, todoListID: string) => void
+    changeTodoListTitle: (todolistId: string, title: string) => void
     demo?: boolean
 }
 
@@ -62,7 +62,7 @@ export const TodoList = React.memo( ({todolist, changeFilter, removeTodoList, ch
 
     // Обработчик кампоненты EditableSpan(изменение названия Тудулиста)
     const changeTodolistTitle = useCallback( (value: string) => {
-        changeTodoListTitle(value, todolist.id)
+        changeTodoListTitle(todolist.id, value)
     }, [changeTodoListTitle, todolist.id])
 
     // Обработчик клика (фильтрация всех задач)
