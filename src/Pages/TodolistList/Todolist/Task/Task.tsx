@@ -5,7 +5,7 @@ import {Delete} from "@material-ui/icons";
 import {TaskStatuses, TaskType} from "../../../../api/tasks-api";
 
 type TaskPropsType = {
-    removeTask: (taskId: string) => void
+    removeTask: (todolistId: string, taskId: string) => void
     changeTaskStatus: (taskId: string, status: TaskStatuses) => void
     changeTaskTitle: (taskId: string, newTitle: string) => void
     task: TaskType
@@ -14,8 +14,8 @@ export const Task = React.memo( ({removeTask, changeTaskStatus, changeTaskTitle,
     //console.log('Task')
     // Обработчик клика (удаление задачи)
     const onClickRemoveTask = useCallback(() => {
-        removeTask(task.id)
-    }, [removeTask, task.id])
+        removeTask(task.todoListId, task.id)
+    }, [removeTask, task.todoListId, task.id])
     // Обработчик клика (изменение чекбокса)
     const onClickChecked = (e: ChangeEvent<HTMLInputElement>) => {
         let newStatusValue = e.currentTarget.checked;

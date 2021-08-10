@@ -1,7 +1,6 @@
 import {
-    createTask,
-    deleteTask, setEntityStatusTask,
-    setTasks,
+    createTask, deleteTask,
+    getTasks, setEntityStatusTask,
     tasksReducer,
     TodoListTaskType,
     updateTask
@@ -45,7 +44,9 @@ beforeEach(() => {
 })
 
 test('correct task should be deleted from correct array', () => {
-    const action = deleteTask({todolistId: "todolistId2", taskId: "2"});
+    const action = deleteTask.fulfilled(
+        {todolistId: "todolistId2", taskId: "2"}, "", {todolistId: "todolistId2", taskId: "2"}
+        );
     const endState = tasksReducer(startState, action)
 
     expect(endState["todolistId1"].length).toBe(3)
@@ -54,7 +55,7 @@ test('correct task should be deleted from correct array', () => {
 });
 
 test('correct task should be added to correct array', () => {
-    const action = createTask({
+    const action = createTask.fulfilled({
         task: {
             todoListId: "todolistId2",
             title: "juce",
@@ -67,8 +68,8 @@ test('correct task should be added to correct array', () => {
             startDate: "",
             id: "id",
             entityStatus: "idle"
-        }
-    });
+        },
+    }, 'requestId', {todolistId: "todolistId2", title: "juce"});
 
     const endState = tasksReducer(startState, action)
 
@@ -80,13 +81,13 @@ test('correct task should be added to correct array', () => {
 })
 
 test('status of specified task should be changed', () => {
-    const action = updateTask({
+    const action = updateTask.fulfilled({
         todolistId: "todolistId2",
         taskId: "2",
         model: {
             status: TaskStatuses.New
         }
-    });
+    }, 'requestId', {todolistId: "todolistId2", taskId: "2", domainModel: {status: TaskStatuses.New}});
 
     const endState = tasksReducer(startState, action)
 
@@ -95,13 +96,13 @@ test('status of specified task should be changed', () => {
 });
 
 test('title of specified task should be changed', () => {
-    const action = updateTask({
+    const action = updateTask.fulfilled({
         todolistId: "todolistId2",
         taskId: "2",
         model: {
             title: "New Title"
         }
-    });
+    }, 'requestId', {todolistId: "todolistId2", taskId: "2", domainModel: {title: "New Title"}});
 
     const endState = tasksReducer(startState, action)
 
@@ -145,7 +146,7 @@ test('property with todolistId should be deleted', () => {
 });
 
 test('tasks should be added for todolist', () => {
-    const action = setTasks({ tasks: startState['todolistId1'], todolistId: 'todolistId1'})
+    const action = getTasks.fulfilled({ tasks: startState['todolistId1'], todolistId: 'todolistId1'}, 'requestId', 'todolistId1')
 
     const endState = tasksReducer({
         'todolistId2': [],

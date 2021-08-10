@@ -48,8 +48,7 @@ export const AddItemForm = React.memo( ({addItem, disabled = false}: AddItemForm
                        onKeyPress={onKeyPressAddTask}
                        helperText={error}
                        onChange={onChangeAddTask}/>
-            <IconButton color={'primary'}
-                        onClick={onClickAddTask}
+            <IconButton onClick={onClickAddTask}
                         disabled={disabled}>
                 <AddBoxIcon/>
             </IconButton>

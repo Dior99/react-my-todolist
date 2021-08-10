@@ -101,8 +101,5 @@ export type TodolistDomainType = TodolistType & {
     entityStatus: RequestStatusType
 }
 
-export type DeleteTodolistType = ReturnType<typeof deleteTodolist>
-export type CreateTodolistType = ReturnType<typeof createTodolist>
 export type ChangeTodolistTitleType = ReturnType<typeof changeTodolistTitle>
 export type SetTodolistType = ReturnType<typeof setTodolist>
-export type setEntityStatusType = ReturnType<typeof setEntityStatus>

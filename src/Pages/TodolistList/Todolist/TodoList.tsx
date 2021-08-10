@@ -6,10 +6,10 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "../../../App/store";
 import {
-    addTaskTC,
+    createTask,
     getTasks,
-    deleteTaskTC,
-    TodoListTaskType, updateTaskTC
+    deleteTask,
+    TodoListTaskType, updateTask
 } from "../tasks-reducer";
 import {Task} from "./Task/Task";
 import {FilterType, TodolistDomainType} from "../todolists-reducer";
@@ -36,23 +36,23 @@ export const TodoList = React.memo( ({todolist, changeFilter, removeTodoList, ch
     }, [dispatch, todolist.id])
 
     // Удаление задачи
-    const removeTask = useCallback( (taskId: string) => {
-        dispatch(deleteTaskTC(todolist.id, taskId))
+    const removeTask = useCallback( (todolistId: string, taskId: string) => {
+        dispatch(deleteTask({todolistId, taskId}))
     }, [dispatch])
 
     // Изменение чекбокса
     const changeTaskStatus = useCallback( (taskId: string, status: TaskStatuses) => {
-        dispatch(updateTaskTC( todolist.id, taskId, {status}))
+        dispatch(updateTask({todolistId: todolist.id, taskId: taskId, domainModel: {status}}))
     }, [dispatch, todolist.id])
 
     // Изменение задачи
     const changeTaskTitle = useCallback( (taskId: string, newTitle: string) => {
-        dispatch(updateTaskTC(todolist.id, taskId, {title: newTitle}))
+        dispatch(updateTask({todolistId: todolist.id, taskId: taskId, domainModel: {title: newTitle}}))
     }, [dispatch, todolist.id])
 
     // Функция кампомненты AddItemForm (добавление задач)
     const addItem = useCallback( (value: string) => {
-        dispatch(addTaskTC(todolist.id, value))
+        dispatch(createTask({todolistId: todolist.id, title: value}))
     }, [dispatch, todolist.id])
 
     // Обработчик клика (удаление Тудулиста)
