@@ -18,7 +18,7 @@ import {StateType} from "./store";
 import {RequestStatusType, setInitializedTC} from "./app-reducer";
 import {Route} from "react-router-dom";
 import {Login} from "../Pages/Login/Login";
-import {logoutTC} from "../Pages/Login/auth-reducer";
+import {logout} from "../Pages/Login/auth-reducer";
 
 type AppPropsType = {
     demo?: boolean
@@ -48,7 +48,7 @@ export function App({demo = false}: AppPropsType) {
     }
 
     const logOutHandler = () => {
-        dispatch(logoutTC())
+        dispatch(logout())
     }
 
 
