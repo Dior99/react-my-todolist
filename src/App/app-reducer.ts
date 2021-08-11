@@ -1,42 +1,39 @@
-import {Dispatch} from "redux";
 import {loginAPI} from "../api/todolists-api";
 import {setIsLoginIn} from "../Pages/Login/auth-reducer";
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 
-export const initialState: InitialStateType = {
-    status: 'idle',
-    error: null,
-    initialized: false
-}
+export const setInitialized = createAsyncThunk("auth/setInitialized",
+    async (_, {dispatch}) => {
+        const res = await loginAPI.me()
+        if (res.data.resultCode === 0) {
+            dispatch(setIsLoginIn({value: true}))
+        }
+    })
 
 const slice = createSlice({
     name: 'app',
-    initialState,
+    initialState: {
+        status: 'idle',
+        error: null,
+        initialized: false
+    } as InitialStateType,
     reducers: {
-        setAppStatus(state, action: PayloadAction<{status: RequestStatusType}>) {
+        setAppStatus(state, action: PayloadAction<{ status: RequestStatusType }>) {
             state.status = action.payload.status
         },
-        setAppError(state, action: PayloadAction<{error: string | null}>) {
+        setAppError(state, action: PayloadAction<{ error: string | null }>) {
             state.error = action.payload.error
-        },
-        setInitialized(state, action: PayloadAction<{value: boolean}>) {
-            state.initialized = action.payload.value
         }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(setInitialized.fulfilled, (state) => {
+            state.initialized = true
+        })
     }
 })
 
 export const appReducer = slice.reducer
-export const {setAppStatus, setAppError, setInitialized} = slice.actions
-
-export const setInitializedTC = () => (dispatch: Dispatch) => {
-    loginAPI.me()
-        .then(response => {
-            if(response.data.resultCode === 0) {
-                dispatch(setIsLoginIn({value: true}))
-            }
-            dispatch(setInitialized({value: true}))
-        })
-}
+export const {setAppStatus, setAppError} = slice.actions
 
 export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
 

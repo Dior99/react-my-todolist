@@ -15,7 +15,7 @@ import {TodolistList} from '../Pages/TodolistList/TodolistList';
 import {ErrorSnackbar} from "../Component/ErrorSnackbar/ErrorSnackbar";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./store";
-import {RequestStatusType, setInitializedTC} from "./app-reducer";
+import {RequestStatusType, setInitialized} from "./app-reducer";
 import {Route} from "react-router-dom";
 import {Login} from "../Pages/Login/Login";
 import {logout} from "../Pages/Login/auth-reducer";
@@ -38,7 +38,7 @@ export function App({demo = false}: AppPropsType) {
     })
 
     useEffect(() => {
-        dispatch(setInitializedTC())
+        dispatch(setInitialized())
     }, [])
 
     if(!initialized) {
