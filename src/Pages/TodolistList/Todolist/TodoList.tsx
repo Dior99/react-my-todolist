@@ -3,82 +3,60 @@ import {AddItemForm} from "../../../Component/AddItemForm/AddItemForm";
 import {EditableSpan} from "../../../Component/EditableSpan/EditableSpan";
 import {Button, ButtonGroup, IconButton} from "@material-ui/core";
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import {useDispatch, useSelector} from "react-redux";
-import {StateType} from "../../../App/store";
-import {
-    createTask,
-    getTasks,
-    deleteTask,
-    TodoListTaskType, updateTask
-} from "../tasks-reducer";
+import {useSelector} from "react-redux";
 import {Task} from "./Task/Task";
-import {FilterType, TodolistDomainType} from "../todolists-reducer";
+import {TodolistDomainType} from "../todolists-reducer";
 import {TaskStatuses} from "../../../api/tasks-api";
+import {tasksAction, todolistAction, todolistSelectors} from "../index";
+import {useActions} from "../../../App/store";
 
 type TodoListPropsType = {
     todolist: TodolistDomainType
-    changeFilter: (value: FilterType, todoListID: string) => void
-    removeTodoList: (todoListID: string) => void
-    changeTodoListTitle: (todolistId: string, title: string) => void
     demo?: boolean
 }
 
-export const TodoList = React.memo( ({todolist, changeFilter, removeTodoList, changeTodoListTitle, demo = false}: TodoListPropsType) => {
+export const TodoList = React.memo( ({todolist, demo = false}: TodoListPropsType) => {
     //console.log('todolist')
-    const dispatch = useDispatch();
-    const tasks = useSelector<StateType, TodoListTaskType>(state => state.tasks)
+    const tasks = useSelector(todolistSelectors.tasks)
+    const {getTasks, createTask} = useActions(tasksAction)
+    const {deleteTodolist, changeTodolistTitle, changeTodolistFilter} = useActions(todolistAction)
 
     useEffect(() => {
         if (demo) {
             return
         }
-        dispatch(getTasks(todolist.id))
-    }, [dispatch, todolist.id])
-
-    // Удаление задачи
-    const removeTask = useCallback( (todolistId: string, taskId: string) => {
-        dispatch(deleteTask({todolistId, taskId}))
-    }, [dispatch])
-
-    // Изменение чекбокса
-    const changeTaskStatus = useCallback( (taskId: string, status: TaskStatuses) => {
-        dispatch(updateTask({todolistId: todolist.id, taskId: taskId, domainModel: {status}}))
-    }, [dispatch, todolist.id])
-
-    // Изменение задачи
-    const changeTaskTitle = useCallback( (taskId: string, newTitle: string) => {
-        dispatch(updateTask({todolistId: todolist.id, taskId: taskId, domainModel: {title: newTitle}}))
-    }, [dispatch, todolist.id])
+        getTasks(todolist.id)
+    }, [todolist.id])
 
     // Функция кампомненты AddItemForm (добавление задач)
     const addItem = useCallback( (value: string) => {
-        dispatch(createTask({todolistId: todolist.id, title: value}))
-    }, [dispatch, todolist.id])
+        createTask({todolistId: todolist.id, title: value})
+    }, [todolist.id])
 
-    // Обработчик клика (удаление Тудулиста)
+    // Удаление Тудулиста
     const onClickRemoveTodoList = () => {
-        removeTodoList(todolist.id)
+        deleteTodolist(todolist.id)
     }
 
     // Обработчик кампоненты EditableSpan(изменение названия Тудулиста)
-    const changeTodolistTitle = useCallback( (value: string) => {
-        changeTodoListTitle(todolist.id, value)
-    }, [changeTodoListTitle, todolist.id])
+    const changeTodolist = useCallback( (value: string) => {
+        changeTodolistTitle({todolistId: todolist.id, title: value})
+    }, [todolist.id])
 
-    // Обработчик клика (фильтрация всех задач)
+    // Фильтрация всех задач
     const clickFilterAllHandler = useCallback( () => {
-        changeFilter('all', todolist.id)
-    }, [changeFilter, todolist.id])
+        changeTodolistFilter({filter: 'all', id: todolist.id})
+    }, [todolist.id])
 
-    // Обработчик клика (фильтрация не выполненных задач)
+    // Фильтрация не выполненных задач
     const clickFilterActiveHandler = useCallback( () => {
-        changeFilter('active', todolist.id)
-    }, [changeFilter, todolist.id])
+        changeTodolistFilter({filter: 'active', id: todolist.id})
+    }, [todolist.id])
 
-    // Обработчик клика (фильтрация выполненных задач)
+    // Фильтрация выполненных задач
     const clickFilterCompletedHandler = useCallback( () => {
-        changeFilter('completed', todolist.id)
-    }, [changeFilter, todolist.id])
+        changeTodolistFilter({filter: 'completed', id: todolist.id})
+    }, [todolist.id])
 
     let todoListTasks = tasks[todolist.id];
     let tasksForTodoList = todoListTasks;
@@ -94,7 +72,7 @@ export const TodoList = React.memo( ({todolist, changeFilter, removeTodoList, ch
             <h3 style={{textAlign: 'center'}}>
                 <EditableSpan title={todolist.title}
                               disabled={todolist.entityStatus === "loading"}
-                              onChange={changeTodolistTitle}/>
+                              onChange={changeTodolist}/>
                 <IconButton onClick={onClickRemoveTodoList} disabled={todolist.entityStatus === "loading"}>
                     <HighlightOffIcon/>
                 </IconButton>
@@ -105,10 +83,7 @@ export const TodoList = React.memo( ({todolist, changeFilter, removeTodoList, ch
                     tasksForTodoList.map(el => {
                             return (
                                 <div key={el.id}>
-                                    <Task removeTask={removeTask}
-                                          task={el}
-                                          changeTaskStatus={changeTaskStatus}
-                                          changeTaskTitle={changeTaskTitle}/>
+                                    <Task task={el}/>
                                 </div>
                             )
                         }

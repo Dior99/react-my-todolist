@@ -14,11 +14,12 @@ import {Menu} from "@material-ui/icons";
 import {TodolistList} from '../Pages/TodolistList/TodolistList';
 import {ErrorSnackbar} from "../Component/ErrorSnackbar/ErrorSnackbar";
 import {useDispatch, useSelector} from "react-redux";
-import {StateType} from "./store";
-import {RequestStatusType, setInitialized} from "./app-reducer";
+import {setInitialized} from "./app-reducer";
 import {Route} from "react-router-dom";
 import {Login} from "../Pages/Login/Login";
 import {logout} from "../Pages/Login/auth-reducer";
+import {appSelectors} from "./index";
+import {authSelectors} from "../Pages/Login";
 
 type AppPropsType = {
     demo?: boolean
@@ -27,9 +28,10 @@ type AppPropsType = {
 export function App({demo = false}: AppPropsType) {
 
     const dispatch = useDispatch()
-    const initialized = useSelector<StateType, boolean>(state => state.app.initialized)
-    const isLoginIn = useSelector<StateType, boolean>(state => state.auth.isLoginIn)
-    const status = useSelector<StateType, RequestStatusType>(state => state.app.status)
+    const initialized = useSelector(appSelectors.selectInitialized)
+    const status = useSelector(appSelectors.selectStatus)
+    const isLoginIn = useSelector(authSelectors.selectIsLoginIn)
+
 
     useEffect(() => {
         if (demo) {

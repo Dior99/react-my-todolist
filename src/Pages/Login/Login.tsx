@@ -1,10 +1,11 @@
 import React from 'react'
-import {Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, TextField, Button, Grid} from '@material-ui/core'
+import {Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, TextField} from '@material-ui/core'
 import {FormikHelpers, useFormik} from "formik";
 import {useSelector} from "react-redux";
 import {login} from "./auth-reducer";
-import {StateType, useAppDispatch} from "../../App/store";
-import { Redirect } from 'react-router-dom';
+import {useAppDispatch} from "../../App/store";
+import {Redirect} from 'react-router-dom';
+import {authSelectors} from "./index";
 
 type ErrorsDataType = {
     email?: string
@@ -20,7 +21,7 @@ type FormValuesType = {
 
 export const Login = () => {
     const dispatch = useAppDispatch();
-    const isLoginIn = useSelector<StateType, boolean>(state => state.auth.isLoginIn)
+    const isLoginIn = useSelector(authSelectors.selectIsLoginIn)
 
     // @ts-ignore
     const formik = useFormik({
